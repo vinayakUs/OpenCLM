@@ -1,0 +1,4 @@
+com\example\gateway\filter\AuthenticationFilter$Config.class
+com\example\gateway\filter\AuthenticationFilter.class
+com\example\gateway\config\CorsConfig.class
+com\example\gateway\GatewayApplication.class

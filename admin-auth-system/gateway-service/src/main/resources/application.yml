@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: auth-server
+          uri: http://localhost:9000
+          predicates:
+            - Path=/auth/**
+        
+        - id: bff-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/**
+          filters:
+            - AuthenticationFilter
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970

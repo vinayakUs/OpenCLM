@@ -1,0 +1,11 @@
+<div class="home-container">
+    <div class="dashboard-card">
+        <h1>Dashboard</h1>
+        <p class="welcome-text" *ngIf="content">{{ content }}</p>
+        <p class="error-text" *ngIf="error">{{ error }}</p>
+
+        <div class="actions">
+            <button class="btn-primary" (click)="logout()">Logout</button>
+        </div>
+    </div>
+</div>

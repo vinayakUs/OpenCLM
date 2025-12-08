@@ -1,0 +1,26 @@
+<div class="auth-container">
+    <h2>Admin Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="alert alert-danger" *ngIf="isLoginFailed">
+        {{ errorMessage }}
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" formControlName="email" placeholder="admin@example.com" />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" placeholder="********" />
+      </div>
+      
+      <button type="submit" class="btn-primary" [disabled]="loginForm.invalid">
+        Sign In
+      </button>
+
+      <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted)">
+          Don't have an account? <a routerLink="/signup">Sign up</a>
+      </p>
+    </form>
+  </div>
