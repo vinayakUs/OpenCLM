@@ -1,52 +1,31 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.css']
+    template: `
+        <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+                <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+            </div>
+
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <button (click)="login()" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Sign in with SSO
+                </button>
+                 <p class="mt-10 text-center text-sm text-gray-500">
+                    Not a member?
+                    <a href="/signup" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign up</a>
+                </p>
+            </div>
+        </div>
+    `
 })
-export class LoginComponent implements OnInit {
-    loginForm: FormGroup;
-    isLoggedIn = false;
-    isLoginFailed = false;
-    errorMessage = '';
+export class LoginComponent {
+    constructor(private authService: AuthService) { }
 
-    constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
-        this.loginForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required]
-        });
-    }
-
-    ngOnInit(): void {
-        if (this.authService.isLoggedIn()) {
-            this.isLoggedIn = true;
-            this.router.navigate(['/home']);
-        }
-    }
-
-    onSubmit(): void {
-        if (this.loginForm.invalid) return;
-
-        const { email, password } = this.loginForm.value;
-
-        this.authService.login({ email, password }).subscribe({
-            next: data => {
-                this.isLoginFailed = false;
-                this.isLoggedIn = true;
-                this.router.navigate(['/home']);
-            },
-            error: err => {
-                this.errorMessage = err.error.message || 'Login failed';
-                this.isLoginFailed = true;
-            }
-        });
+    login() {
+        this.authService.login({});
     }
 }

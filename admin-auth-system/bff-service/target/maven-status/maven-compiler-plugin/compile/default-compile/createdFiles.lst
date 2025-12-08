@@ -1,0 +1,3 @@
+com\example\bff\controller\HomeController.class
+com\example\bff\BffApplication.class
+com\example\bff\config\SecurityConfig.class

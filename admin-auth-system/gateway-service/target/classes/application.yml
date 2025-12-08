@@ -10,14 +10,15 @@ spring:
         - id: auth-server
           uri: http://localhost:9000
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**, /oauth2/**, /login/**
         
         - id: bff-service
           uri: http://localhost:8082
           predicates:
             - Path=/api/**
-          filters:
-            - AuthenticationFilter
 
-jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
