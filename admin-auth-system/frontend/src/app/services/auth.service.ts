@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private AUTH_API = 'http://localhost:8080/auth/'; // Gateway URL for Signup
-    private BFF_LOGIN_URL = 'http://localhost:8080/api/oauth2/authorization/bff-client';
+    private AUTH_API = environment.authBaseUrl + '/'; // Gateway URL for Signup
+    private BFF_LOGIN_URL = environment.apiBaseUrl + '/oauth2/authorization/bff-client';
 
     constructor(private http: HttpClient, private router: Router) { }
 
@@ -23,11 +24,11 @@ export class AuthService {
     }
 
     logout(): void {
-        window.location.href = 'http://localhost:8080/api/logout';
+        window.location.href = environment.apiBaseUrl + '/logout';
     }
 
     getUser(): Observable<any> {
-        return this.http.get('http://localhost:8080/api/user', { withCredentials: true });
+        return this.http.get(environment.apiBaseUrl + '/user', { withCredentials: true });
     }
 
     isLoggedIn(): Observable<boolean> {
