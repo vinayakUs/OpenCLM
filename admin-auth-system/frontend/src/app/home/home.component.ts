@@ -22,7 +22,24 @@ export class HomeComponent implements OnInit {
                 this.content = data;
             },
             error: err => {
-                this.content = JSON.parse(err.error).message || 'Error fetching data';
+                console.error('Error fetching home content:', err);
+                let message = 'Error fetching data';
+
+                if (err.error) {
+                    if (typeof err.error === 'string') {
+                        try {
+                            const parsed = JSON.parse(err.error);
+                            message = parsed.message || err.error;
+                        } catch (e) {
+                            // If parsing fails, it's likely HTML or plain text
+                            message = err.error;
+                        }
+                    } else if (err.error.message) {
+                        message = err.error.message;
+                    }
+                }
+
+                this.content = message;
                 this.error = 'Failed to load content';
             }
         });

@@ -11,14 +11,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:4200/home", true));
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests(auth -> auth
+                                                .anyRequest().authenticated())
+                                .oauth2Login(oauth2 -> oauth2
+                                                .authorizationEndpoint(authorization -> authorization
+                                                                .baseUri("/api/oauth2/authorization"))
+                                                .redirectionEndpoint(redirection -> redirection
+                                                                .baseUri("/api/login/oauth2/code/*"))
+                                                .defaultSuccessUrl("http://localhost:4200/home", true));
 
-        return http.build();
-    }
+                return http.build();
+        }
 }

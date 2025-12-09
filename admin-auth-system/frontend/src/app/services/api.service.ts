@@ -11,6 +11,6 @@ export class ApiService {
     constructor(private http: HttpClient) { }
 
     getHomeContent(): Observable<any> {
-        return this.http.get(this.API_URL + 'home', { responseType: 'text' });
+        return this.http.get(this.API_URL + 'home', { responseType: 'text', withCredentials: true });
     }
 }

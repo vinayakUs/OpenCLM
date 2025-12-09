@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
     private AUTH_API = 'http://localhost:8080/auth/'; // Gateway URL for Signup
-    private BFF_LOGIN_URL = 'http://localhost:8082/oauth2/authorization/bff-client';
+    private BFF_LOGIN_URL = 'http://localhost:8080/api/oauth2/authorization/bff-client';
 
     constructor(private http: HttpClient, private router: Router) { }
 
@@ -23,12 +23,12 @@ export class AuthService {
     }
 
     logout(): void {
-        window.location.href = 'http://localhost:8082/logout';
+        window.location.href = 'http://localhost:8080/api/logout';
     }
 
     isLoggedIn(): Observable<boolean> {
         // Check if we can access a protected resource
-        return this.http.get('http://localhost:8080/api/home', { responseType: 'text' }).pipe(
+        return this.http.get('http://localhost:8080/api/home', { responseType: 'text', withCredentials: true }).pipe(
             map(() => true),
             catchError(() => of(false))
         );

@@ -70,6 +70,7 @@ public class AuthorizationServerConfig {
             throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
@@ -84,16 +85,26 @@ public class AuthorizationServerConfig {
             PasswordEncoder passwordEncoder) {
         JdbcRegisteredClientRepository repository = new JdbcRegisteredClientRepository(jdbcTemplate);
 
-        // Check if client exists, if not, create it
-        if (repository.findByClientId("bff-client") == null) {
-            RegisteredClient bffClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        // Check if client exists, update it, or create it
+        RegisteredClient existingClient = repository.findByClientId("bff-client");
+        String bffRedirectUri = "http://localhost:8080/api/login/oauth2/code/bff-client";
+
+        RegisteredClient bffClient;
+        if (existingClient != null) {
+            bffClient = RegisteredClient.from(existingClient)
+                    .redirectUris(uris -> {
+                        uris.clear();
+                        uris.add(bffRedirectUri);
+                    })
+                    .build();
+        } else {
+            bffClient = RegisteredClient.withId(UUID.randomUUID().toString())
                     .clientId("bff-client")
                     .clientSecret(passwordEncoder.encode("secret"))
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .redirectUri("http://localhost:8082/login/oauth2/code/bff-client")
-
+                    .redirectUri(bffRedirectUri)
                     .scope(OidcScopes.OPENID)
                     .scope(OidcScopes.PROFILE)
                     .scope(OidcScopes.EMAIL)
@@ -101,9 +112,9 @@ public class AuthorizationServerConfig {
                     .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                     .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(15)).build())
                     .build();
-
-            repository.save(bffClient);
         }
+
+        repository.save(bffClient);
 
         return repository;
     }

@@ -1,0 +1,107 @@
+# System Architecture & Request Flows
+
+This document outlines the authentication and request flows for the **Angular + Spring Boot BFF (Backend for Frontend)** architecture.
+
+## 1. Authentication Flow (OAuth2 / OpenID Connect)
+
+This flow establishes a secure session between the User (Browser) and the BFF Service.
+
+```mermaid
+sequenceDiagram
+    participant User as Browser
+    participant GW as Gateway (8080)
+    participant BFF as BFF Service (8082)
+    participant Auth as Auth Server (9000)
+
+    Note over User, Auth: Step 1: Login Initiation
+    User->>User: Clicks "Login"
+    User->>GW: GET /api/oauth2/authorization/bff-client
+    GW->>BFF: Proxies Request
+    BFF->>BFF: Creates Authorization Request State
+    BFF-->>User: 302 Redirect to Auth Server (via Browser)
+    
+    Note over User, Auth: Step 2: Authentication
+    User->>GW: GET /oauth2/authorize?...
+    GW->>Auth: Proxies Request
+    Auth-->>User: Returns Login Page
+    User->>GW: POST /login (Credentials)
+    GW->>Auth: Proxies Credentials
+    Auth->>Auth: Validates Credentials
+    Auth-->>User: 302 Redirect to Callback (with Auth Code)
+    
+    Note over User, Auth: Step 3: Code Exchange
+    User->>GW: GET /api/login/oauth2/code/bff-client?code=...
+    GW->>BFF: Proxies Callback
+    BFF->>Auth: POST /oauth2/token (Backchannel: Code -> Token)
+    Auth-->>BFF: Returns Access/Refresh Tokens
+    BFF->>BFF: Creates Session (Stores Tokens)
+    BFF-->>User: 302 Redirect to /home (Set-Cookie: BFFSESSIONID)
+```
+
+**Key Points:**
+*   **Gateway (8080):** acts as the single entry point.
+*   **BFF (8082):** acts as the OAuth2 Confidential Client. It never exposes tokens to the browser.
+*   **Browser:** only holds an opaque Session Cookie (`BFFSESSIONID`).
+
+---
+
+## 2. API Access Flow (Protected Resources)
+
+How the Frontend accesses data from the BFF.
+
+```mermaid
+sequenceDiagram
+    participant User as Browser
+    participant GW as Gateway (8080)
+    participant BFF as BFF Service (8082)
+
+    User->>GW: GET /api/home (Cookie: BFFSESSIONID)
+    GW->>BFF: Proxies Request (X-Forwarded-*)
+    BFF->>BFF: Validates Session Cookie
+    BFF-->>User: 200 OK "Welcome Admin"
+```
+
+---
+
+## 3. BFF Calling Other Services (Service-to-Service)
+
+When the BFF needs to fetch data from another microservice (e.g., `product-service`) via the Gateway.
+
+**Prerequisites:**
+*   The BFF must extract the **Access Token** from the user's session.
+*   The BFF must use a `WebClient` configured to relay this token.
+
+```mermaid
+sequenceDiagram
+    participant BFF as BFF Service (8082)
+    participant GW as Gateway (8080)
+    participant Service as Product Service (808X)
+
+    Note over BFF: User Request arrives (Session Active)
+    BFF->>BFF: Retrieve Access Token from Session
+    BFF->>GW: GET /products (Authorization: Bearer <token>)
+    GW->>Service: Proxies Request
+    Service->>Service: Validates JWT (via Public Key from Auth Server)
+    Service-->>BFF: Returns JSON Data
+```
+
+### Implementation Hint (Spring Security)
+
+To implement this in the BFF, you typically inject the `OAuth2AuthorizedClientService` or use the `ServletOAuth2AuthorizedClientExchangeFilterFunction` with `WebClient`.
+
+```java
+// Example usage in BFF Controller/Service
+@Autowired
+private WebClient webClient; // Configured with OAuth2 support
+
+public String getProducts(@RegisteredOAuth2AuthorizedClient("bff-client") OAuth2AuthorizedClient authorizedClient) {
+    String accessToken = authorizedClient.getAccessToken().getTokenValue();
+    
+    return webClient.get()
+            .uri("http://localhost:8080/products") // Call via Gateway
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+}
+```
