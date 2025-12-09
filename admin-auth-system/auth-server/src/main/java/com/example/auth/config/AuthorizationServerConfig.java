@@ -96,6 +96,10 @@ public class AuthorizationServerConfig {
                         uris.clear();
                         uris.add(bffRedirectUri);
                     })
+                    .postLogoutRedirectUris(uris -> {
+                        uris.clear();
+                        uris.add("http://localhost:4200/login?logout");
+                    })
                     .build();
         } else {
             bffClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -105,6 +109,7 @@ public class AuthorizationServerConfig {
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                     .redirectUri(bffRedirectUri)
+                    .postLogoutRedirectUri("http://localhost:4200/login?logout")
                     .scope(OidcScopes.OPENID)
                     .scope(OidcScopes.PROFILE)
                     .scope(OidcScopes.EMAIL)

@@ -26,15 +26,18 @@ export class AuthService {
         window.location.href = 'http://localhost:8080/api/logout';
     }
 
+    getUser(): Observable<any> {
+        return this.http.get('http://localhost:8080/api/user', { withCredentials: true });
+    }
+
     isLoggedIn(): Observable<boolean> {
-        // Check if we can access a protected resource
-        return this.http.get('http://localhost:8080/api/home', { responseType: 'text', withCredentials: true }).pipe(
-            map(() => true),
+        return this.getUser().pipe(
+            map(user => !!user && Object.keys(user).length > 0),
             catchError(() => of(false))
         );
     }
 
     isAdmin(): Observable<boolean> {
-        return this.isLoggedIn();
+        return this.isLoggedIn(); // For now, just check if logged in. Add role check later if needed.
     }
 }

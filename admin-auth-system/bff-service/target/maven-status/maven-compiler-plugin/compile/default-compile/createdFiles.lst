@@ -1,3 +1,4 @@
 com\example\bff\controller\HomeController.class
 com\example\bff\BffApplication.class
+com\example\bff\controller\UserController.class
 com\example\bff\config\SecurityConfig.class
