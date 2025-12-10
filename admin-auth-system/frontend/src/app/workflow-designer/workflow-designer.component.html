@@ -1,0 +1,26 @@
+<div class="designer-container">
+    <div class="header-actions">
+        <h1>Workflow Designer</h1>
+        <button class="btn-primary" (click)="createNew()">
+            <span class="material-icons">add</span>
+            Create New Workflow
+        </button>
+    </div>
+
+    <div class="workflow-grid">
+        <div class="workflow-card" *ngFor="let wf of workflows">
+            <div class="card-header">
+                <span class="icon-box">
+                    <span class="material-icons">account_tree</span>
+                </span>
+                <span class="status-badge" [class.published]="wf.status === 'Published'">{{ wf.status }}</span>
+            </div>
+            <h3>{{ wf.title }}</h3>
+            <p>{{ wf.description }}</p>
+            <div class="card-footer">
+                <span class="date">{{ wf.date }}</span>
+                <button class="btn-text">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
