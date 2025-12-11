@@ -1,8 +1,0 @@
-com\example\storageservice\services\FileUploadService.class
-com\example\storageservice\entity\FileStorage.class
-com\example\storageservice\repository\FileStorageRepository.class
-com\example\storageservice\StorageController.class
-com\example\storageservice\dto\FileUploadResponse.class
-com\example\storageservice\StorageServiceApplication.class
-com\example\storageservice\controller\FileStorageController.class
-com\example\storageservice\services\S3Service.class
