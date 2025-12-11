@@ -12,11 +12,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
   localstack:
     image: localstack/localstack:latest
     container_name: localstack
     ports:
-      - "4566:4566" # Main API Gateway
+      - "4566:4566"
     environment:
       - SERVICES=s3
       - DEBUG=1
@@ -24,8 +26,8 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
     volumes:
-      - localstack-data:/var/lib/localstack # ✅ Docker Volume (Persistent)
-      - ./init-scripts:/etc/localstack/init/ready.d # ✅ Startup scripts
+      - localstack-data:/var/lib/localstack
+      - ./init-scripts:/etc/localstack/init/ready.d
       - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
