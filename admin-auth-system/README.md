@@ -60,3 +60,32 @@ Access the app at `http://localhost:4200`.
 
 ## Postman Testing
 Import the `postman_collection.json` file into Postman to test the APIs directly via the Gateway.
+
+
+curl --location 'http://localhost:8085/internal/notifications/send' \
+--header 'Content-Type: application/json' \
+--data '{
+"eventType": "OTP_SENT",
+"channel": "EMAIL",
+"recipient": "radhikaandrew12@gmail.com",
+"variables": {
+"otp": "987654",
+"expiryMinutes": 10
+},
+"referenceType": "AUTH",
+"referenceId": "550e8400-e29b-41d4-a716-446655440000"
+}'
+
+
+curl --location 'http://localhost:8085/internal/notifications/send' \
+--header 'Content-Type: application/json' \
+--data '{
+"eventType": "WORKFLOW_CREATED",
+"channel": "IN_APP",
+"userId": "550e8400-e29b-41d4-a716-446655440001",
+"variables": {
+"workflowName": "Project Alpha NDA"
+},
+"referenceType": "WORKFLOW",
+"referenceId": "550e8400-e29b-41d4-a716-446655440002"
+}'
