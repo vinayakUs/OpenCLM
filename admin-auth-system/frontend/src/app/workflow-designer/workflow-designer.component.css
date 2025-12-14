@@ -1,0 +1,134 @@
+.designer-container {
+    padding: 24px;
+    padding-top: 80px;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.header-actions h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #202124;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1557b0;
+}
+
+.btn-primary .material-icons {
+    font-size: 20px;
+}
+
+.workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.workflow-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.workflow-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.icon-box {
+    width: 40px;
+    height: 40px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background-color: #f1f3f4;
+    color: #5f6368;
+    font-weight: 500;
+}
+
+.status-badge.published {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.workflow-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #202124;
+}
+
+.workflow-card p {
+    margin: 0;
+    color: #5f6368;
+    font-size: 13px;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.card-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+}
+
+.date {
+    font-size: 12px;
+    color: #9aa0a6;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #1a73e8;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}

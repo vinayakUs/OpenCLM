@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
 
+import { NavbarComponent } from '../components/navbar/navbar.component';
+
 @Component({
     selector: 'app-home',
     standalone: true,

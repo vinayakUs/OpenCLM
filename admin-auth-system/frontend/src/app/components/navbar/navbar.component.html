@@ -1,0 +1,51 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="brand-logo">
+      <span class="material-icons">dns</span>
+    </div>
+    <div class="nav-links">
+      <a routerLink="/home" routerLinkActive="active" class="nav-item">Dashboard</a>
+      <a routerLink="/repository" routerLinkActive="active" class="nav-item">Repository</a>
+      <a routerLink="/workflow-designer" routerLinkActive="active" class="nav-item">Workflow Designer</a>
+      <a routerLink="/insights" routerLinkActive="active" class="nav-item">Insights</a>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <button class="icon-btn" title="Help">
+      <span class="material-icons">help_outline</span>
+    </button>
+    <button class="icon-btn" title="Notifications">
+      <span class="material-icons">notifications_none</span>
+      <span class="notification-dot"></span>
+    </button>
+
+    <div class="divider"></div>
+
+    <div class="user-info-item dropdown-trigger">
+      <span class="text-label">Admin</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="user-info-item dropdown-trigger">
+      <span class="text-label">Bolopue, Inc.</span>
+      <span class="material-icons arrow">arrow_drop_down</span>
+    </div>
+
+    <div class="profile-menu" (click)="toggleDropdown()">
+      <div class="avatar">
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true" alt="User">
+      </div>
+      <span class="material-icons arrow">arrow_drop_down</span>
+
+      <div class="dropdown" *ngIf="isDropdownOpen">
+        <button class="dropdown-item logout-btn" (click)="logout()">
+          <span class="material-icons">logout</span>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
