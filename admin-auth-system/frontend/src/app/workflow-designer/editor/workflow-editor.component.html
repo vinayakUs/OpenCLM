@@ -20,12 +20,82 @@
     <div class="editor-container">
         <div class="col-left">
             <div class="scroll-content">
-                <h2>Properties</h2>
-                <!-- Placeholder content to demonstrate scrolling -->
-                <div class="property-group" *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
-                    <label>Property {{item}}</label>
-                    <input type="text" placeholder="Enter value...">
+                <div class="section-header">
+                    <h2>Variables</h2>
+                    <button class="btn-icon-add" (click)="addVariable()" title="Add Variable">
+                        <span class="material-icons">add</span>
+                    </button>
                 </div>
+
+                <div class="variables-list">
+                    <div class="variable-card" *ngFor="let v of variables; let i = index"
+                        [class.expanded]="expandedIndex === i">
+                        <!-- Card Header (Always Visible) -->
+                        <div class="card-header" (click)="toggleExpand(i)">
+                            <div class="header-info">
+                                <span class="var-label">{{ v.uiLabel || 'Untitled' }}</span>
+                                <span class="type-badge">{{ v.type }}</span>
+                            </div>
+                            <span class="material-icons expand-icon">{{ expandedIndex === i ? 'expand_less' :
+                                'expand_more' }}</span>
+                        </div>
+
+                        <!-- Card Body (Expandable) -->
+                        <div class="card-body" *ngIf="expandedIndex === i">
+
+                            <!-- View Mode -->
+                            <div *ngIf="editingIndex !== i">
+                                <div class="view-row">
+                                    <span class="view-label">UI Label</span>
+                                    <span class="view-value">{{ v.uiLabel }}</span>
+                                </div>
+                                <div class="view-row">
+                                    <span class="view-label">Variable Name</span>
+                                    <span class="view-value">{{ v.name }}</span>
+                                </div>
+                                <div class="view-row">
+                                    <span class="view-label">Type</span>
+                                    <span class="view-value">{{ v.type | titlecase }}</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn-secondary small" (click)="startEdit(i, $event)"
+                                        style="margin-right:8px;">Edit</button>
+                                    <button class="btn-text-danger" (click)="deleteVariable(i, $event)">Remove</button>
+                                </div>
+                            </div>
+
+                            <!-- Edit Mode -->
+                            <div *ngIf="editingIndex === i">
+                                <div class="form-group">
+                                    <input type="text" [(ngModel)]="tempVariable.uiLabel" (input)="onLabelChange()"
+                                        placeholder="Enter Display Label">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" [(ngModel)]="tempVariable.name" (input)="onNameInput()"
+                                        placeholder="variable_name">
+                                    <small
+                                        style="display:block; color:#666; font-size:11px; margin-top:2px; margin-left: 2px;">Lowercase
+                                        alphanumeric</small>
+                                </div>
+                                <div class="form-group">
+                                    <select [(ngModel)]="tempVariable.type" aria-label="Data Type">
+                                        <option value="string">String</option>
+                                        <option value="int">Integer</option>
+                                    </select>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn-secondary small" (click)="cancelEdit()"
+                                        style="margin-right:8px;">Cancel</button>
+                                    <button class="btn-primary small" (click)="saveEdit()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-state" *ngIf="variables.length === 0">
+                <p>No variables defined</p>
             </div>
         </div>
 

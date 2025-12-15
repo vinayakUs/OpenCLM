@@ -1,3 +1,4 @@
+/* Layout */
 .editor-layout {
     display: flex;
     flex-direction: column;
@@ -19,7 +20,8 @@
     z-index: 100;
 }
 
-.nav-left {
+.nav-left,
+.nav-right {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -31,10 +33,10 @@
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
+    color: #5f6368;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5f6368;
 }
 
 .icon-btn.back-btn:hover {
@@ -52,10 +54,8 @@
     font-weight: 500;
     color: #202124;
     border: 1px solid transparent;
-    border-radius: 4px;
     padding: 4px 8px;
     background: transparent;
-    font-family: inherit;
     width: 250px;
 }
 
@@ -77,324 +77,333 @@
     color: #5f6368;
 }
 
-.nav-right {
-    display: flex;
-    gap: 12px;
+/* Buttons */
+.btn-secondary,
+.btn-primary {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .btn-secondary {
     background: white;
     border: 1px solid #dadce0;
     color: #3c4043;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    background-color: #f8f9fa;
-    border-color: #dadce0;
 }
 
 .btn-primary {
     background-color: #1a73e8;
     color: white;
     border: none;
-    padding: 8px 24px;
-    border-radius: 4px;
-    font-weight: 500;
+}
+
+.btn-icon-add {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: transform 0.1s;
 }
 
-.btn-primary:hover {
-    background-color: #1557b0;
+.btn-icon-add:active {
+    transform: scale(0.95);
 }
 
-/* 2-Column Layout */
+.btn-text-danger {
+    background: none;
+    border: none;
+    color: #d93025;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.btn-text-danger:hover {
+    background-color: #fce8e6;
+}
+
+.btn-text-danger .material-icons {
+    font-size: 16px;
+}
+
+/* Editor Container */
 .editor-container {
     display: flex;
     flex: 1;
     overflow: hidden;
-    /* Prevent container itself from scrolling */
 }
 
 .col-left {
-    width: 35%;
+    width: 350px;
     border-right: 1px solid #e0e0e0;
-    background-color: white;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
 }
 
 .col-right {
-    width: 65%;
+    flex: 1;
     background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
 }
 
-/* Scrollable Areas */
 .scroll-content {
     overflow-y: auto;
     height: 100%;
     padding: 24px;
 }
 
-/* Placeholder Styling */
-h2 {
-    font-size: 16px;
-    margin-top: 0;
-    color: #3c4043;
-    margin-bottom: 24px;
-}
-
-.property-group {
+/* Variables Section */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f3f4;
 }
 
-.property-group label {
+.section-header h2 {
+    font-size: 16px;
+    margin: 0;
+    color: #202124;
+}
+
+/* Variables List - Minimalist Cards */
+.variables-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.variable-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.variable-card:hover {
+    border-color: #dadce0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.variable-card.expanded {
+    border-color: #1a73e8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    user-select: none;
+}
+
+.variable-card.expanded .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.var-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #3c4043;
+}
+
+.type-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: #f1f3f4;
+    color: #5f6368;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.expand-icon {
+    font-size: 20px;
+    color: #5f6368;
+}
+
+.card-body {
+    padding: 16px;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
     display: block;
-    font-size: 13px;
+    font-size: 11px;
+    text-transform: uppercase;
     color: #5f6368;
     margin-bottom: 4px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
-.property-group input {
+/* Inputs: high specificity to override defaults */
+.variable-card .form-group input,
+.variable-card .form-group select,
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 8px;
     border: 1px solid #dadce0;
     border-radius: 4px;
+    font-size: 13px;
     box-sizing: border-box;
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
-/* Upload State */
-.upload-container {
+.form-group input.readonly-input {
+    background-color: #f8f9fa;
+    color: #5f6368;
+    cursor: not-allowed;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #1a73e8;
+}
+
+.card-footer {
     display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f3f4;
+}
+
+.empty-state {
+    text-align: center;
+    color: #9aa0a6;
+    font-size: 13px;
+    padding: 32px 0;
+}
+
+/* Upload & Canvas Styles (Preserved) */
+.upload-container {
+    height: 100%;
+    display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    text-align: center;
 }
 
 .upload-box {
-    background-color: white;
+    text-align: center;
+    padding: 40px;
     border: 2px dashed #dadce0;
-    border-radius: 12px;
-    padding: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 400px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
+    border-radius: 8px;
+    background: white;
 }
 
-.upload-box:hover {
-    border-color: #1a73e8;
-    background-color: #f8fcfd;
-}
-
-.upload-icon {
-    font-size: 48px;
-    color: #1a73e8;
-    margin-bottom: 16px;
-}
-
-.upload-box h3 {
-    margin: 0 0 8px 0;
-    font-size: 18px;
-    color: #202124;
-}
-
-.upload-box p {
-    color: #5f6368;
-    font-size: 14px;
-    margin: 0 0 24px 0;
-    line-height: 1.5;
-}
-
-/* Canvas State */
 .canvas-view {
+    padding: 24px;
     height: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
 }
 
-.canvas-header {
+.editor-wrapper {
+    flex: 1;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+    flex-direction: column;
 }
 
-.btn-text {
-    background: none;
-    border: none;
-    color: #1a73e8;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 13px;
-}
-
-.btn-text:hover {
-    text-decoration: underline;
-}
-
-/* Editor Toolbar Styles */
-/* Editor Toolbar Styles */
+/* Tiptap Toolbar */
 .editor-toolbar {
+    padding: 8px;
+    border-bottom: 1px solid #dadce0;
+    background: #f8f9fa;
     display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-bottom: 1px solid #333;
-    background-color: #0d0d0d;
-    /* Dark background */
-    gap: 8px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    color: #fff;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.button-group {
-    display: flex;
-    align-items: center;
     gap: 4px;
+    flex-wrap: wrap;
 }
 
 .editor-toolbar button {
     background: none;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #a1a1a1;
-    /* Muted white */
     padding: 4px;
-    height: 32px;
-    min-width: 32px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #5f6368;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
 }
 
 .editor-toolbar button:hover {
-    background-color: #333;
-    color: #fff;
+    background-color: #e8f0fe;
+    color: #1a73e8;
 }
 
 .editor-toolbar button.is-active {
-    background-color: #fff;
-    color: #0d0d0d;
-}
-
-.editor-toolbar button:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-}
-
-.editor-toolbar .material-icons {
-    font-size: 20px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
 }
 
 .divider-vertical {
     width: 1px;
-    height: 24px;
-    background-color: #333;
+    background-color: #dadce0;
     margin: 0 4px;
+    height: 24px;
+    align-self: center;
 }
 
-.spacer {
-    flex: 1;
-}
-
-/* Editor Wrapper Adjustments */
-.canvas-placeholder.editor-wrapper {
-    flex: 1;
-    min-height: 800px;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    display: flex;
-    /* Changed back to flex for column layout of toolbar+content */
-    flex-direction: column;
-    padding: 0;
-    background-color: white;
-    overflow: hidden;
-}
-
+/* Tiptap Content */
 ::ng-deep .ProseMirror {
-    padding: 24px 40px;
-    min-height: 500px;
     outline: none;
-    flex: 1;
-}
-
-::ng-deep .ProseMirror p {
-    font-size: 16px;
+    padding: 24px 40px;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
-    color: #333;
-}
-
-/* Typographic Styles for Editor Content */
-::ng-deep .ProseMirror h1 {
-    font-size: 2em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-::ng-deep .ProseMirror h2 {
-    font-size: 1.5em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-::ng-deep .ProseMirror h3 {
-    font-size: 1.17em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-::ng-deep .ProseMirror ul,
-::ng-deep .ProseMirror ol {
-    padding-left: 1.5em;
-}
-
-::ng-deep .ProseMirror blockquote {
-    border-left: 3px solid #dadce0;
-    padding-left: 1em;
-    margin-left: 0;
-    color: #5f6368;
-}
-
-::ng-deep .ProseMirror pre {
-    background: #f1f3f4;
-    padding: 0.75em;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-::ng-deep .ProseMirror code {
-    background: #f1f3f4;
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-    font-family: monospace;
-    font-size: 0.9em;
-}
-
-.node {
-    width: 150px;
-    height: 80px;
-    background: white;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    min-height: 200px;
 }
