@@ -227,6 +227,31 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex: 1;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-icon-small {
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.btn-icon-small:hover {
+    background-color: #e8f0fe;
+    color: #1a73e8;
 }
 
 .var-label {
@@ -347,63 +372,230 @@
     flex-direction: column;
 }
 
+/* Button Group for Toolbar */
+.button-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Editor Wrapper - Minimalist Paper Look */
 .editor-wrapper {
     flex: 1;
     background: white;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Removed border */
+    border-radius: 0;
+    /* Sharp edges or subtle radius depending on preference, keeping 0 for full doc feel or 2px */
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15), 0 1px 2px rgba(60, 64, 67, 0.3);
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 816px;
+    /* A4 width approx */
+    height: 100%;
 }
 
-/* Tiptap Toolbar */
+/* Tiptap Toolbar - Minimalist */
 .editor-toolbar {
-    padding: 8px;
-    border-bottom: 1px solid #dadce0;
-    background: #f8f9fa;
+    padding: 8px 16px;
+    border-bottom: 1px solid #f1f3f4;
+    background: #ffffff;
     display: flex;
-    gap: 4px;
+    gap: 12px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .editor-toolbar button {
     background: none;
     border: none;
-    padding: 4px;
+    padding: 6px;
     cursor: pointer;
     border-radius: 4px;
-    color: #5f6368;
+    color: #444746;
+    /* Darker grey */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.editor-toolbar button:hover {
+    background-color: #f1f3f4;
+    color: #1f1f1f;
+}
+
+.editor-toolbar button.is-active {
+    background-color: #e8f0fe;
+    color: #0b57d0;
+    /* Google Blue */
+}
+
+.divider-vertical {
+    width: 1px;
+    background-color: #e0e0e0;
+    margin: 0 4px;
+    height: 20px;
+    align-self: center;
+}
+
+/* Tiptap Content - Paper Padding */
+::ng-deep .ProseMirror {
+    outline: none;
+    padding: 48px 72px;
+    /* More padding like valid doc */
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    min-height: 200px;
+}
+
+/* Bubble Menu */
+.bubble-menu {
+    display: flex;
+    background-color: #202124;
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    align-items: center;
+    gap: 2px;
+}
+
+.bubble-menu button {
+    background: none;
+    border: none;
+    padding: 6px;
+    color: #e8eaed;
+    border-radius: 4px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.editor-toolbar button:hover {
-    background-color: #e8f0fe;
-    color: #1a73e8;
+.bubble-menu button:hover {
+    background-color: #3c4043;
 }
 
-.editor-toolbar button.is-active {
-    background-color: #e8f0fe;
-    color: #1a73e8;
+.bubble-menu button.is-active {
+    background-color: #8ab4f8;
+    color: #202124;
 }
 
-.divider-vertical {
+.bubble-menu button .material-icons {
+    font-size: 18px;
+}
+
+.bubble-divider {
     width: 1px;
-    background-color: #dadce0;
+    height: 16px;
+    background-color: #5f6368;
     margin: 0 4px;
-    height: 24px;
-    align-self: center;
 }
 
-/* Tiptap Content */
-::ng-deep .ProseMirror {
-    outline: none;
-    padding: 24px 40px;
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    min-height: 200px;
+/* Breadcrumb Disabled State */
+.breadcrumb-item.disabled {
+    color: #dadce0 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Upload Card Styles */
+.upload-card {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upload-card .material-icons.upload-icon {
+    font-size: 64px;
+    color: #1a73e8;
+    margin-bottom: 24px;
+    display: block;
+}
+
+.upload-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    color: #202124;
+}
+
+.upload-card p {
+    color: #5f6368;
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+/* File Meta View */
+.file-meta-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.file-icon {
+    color: #1a73e8;
+    font-size: 32px;
+}
+
+.file-details h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: #202124;
+}
+
+.file-details span {
+    font-size: 12px;
+    color: #5f6368;
+}
+
+.file-actions {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-large {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #dadce0;
+    color: #3c4043;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-outline:hover {
+    background-color: #f8f9fa;
+    border-color: #dadce0;
 }

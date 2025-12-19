@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { TiptapEditorDirective } from 'ngx-tiptap';
+import { TiptapEditorDirective, TiptapBubbleMenuDirective } from 'ngx-tiptap';
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -12,6 +12,8 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
+import BubbleMenu from '@tiptap/extension-bubble-menu';
+type Section = 'home' | 'contracts' | 'details';
 
 
 
@@ -25,7 +27,7 @@ interface WorkflowVariable {
 @Component({
     selector: 'app-workflow-editor',
     standalone: true,
-    imports: [CommonModule, FormsModule, TiptapEditorDirective],
+    imports: [CommonModule, FormsModule, TiptapEditorDirective, TiptapBubbleMenuDirective],
     templateUrl: './workflow-editor.component.html',
     styleUrls: ['./workflow-editor.component.css']
 })
@@ -40,8 +42,25 @@ export class WorkflowEditorComponent implements OnInit, OnDestroy {
     expandedIndex: number | null = null;
     editingIndex: number | null = null;
     tempVariable: WorkflowVariable = { uiLabel: '', name: '', type: 'string' };
-
+    breadcrumbs = [
+        { label: 'Upload Document', key: 'home' as Section },
+        { label: 'Editor', key: 'contracts' as Section },
+        { label: 'Finalize', key: 'details' as Section }
+    ];
     constructor(private location: Location, private http: HttpClient) { }
+
+    current = 'home' as Section;
+
+
+    isDisabled(key: Section): boolean {
+        if (key === 'home') return false;
+        return !this.uploadedFile;
+    }
+
+    selectTab(key: Section) {
+        if (this.isDisabled(key)) return;
+        this.current = key;
+    }
 
     ngOnInit(): void {
         this.editor = new Editor({
@@ -53,6 +72,7 @@ export class WorkflowEditorComponent implements OnInit, OnDestroy {
                 Subscript,
                 Superscript,
                 Image,
+                BubbleMenu,
             ],
             content: '<p>Start editing your workflow documentation here...</p>',
         });
@@ -90,6 +110,8 @@ export class WorkflowEditorComponent implements OnInit, OnDestroy {
                 this.uploadedFile = file;
                 console.log('File selected:', file.name);
                 this.uploadFile(file);
+                // Automatically move to editor? Maybe let user decide in new UI. 
+                // For now, staying on home to show metadata as requested.
             } else {
                 alert('Please upload a valid .docx file');
             }
@@ -138,6 +160,14 @@ export class WorkflowEditorComponent implements OnInit, OnDestroy {
         if (event) event.stopPropagation();
         this.editingIndex = index;
         this.tempVariable = { ...this.variables[index] };
+    }
+
+    insertVariable(variable: WorkflowVariable, event: Event) {
+        event.stopPropagation();
+        if (variable.name) {
+            const placeholder = `{{${variable.name}}}`;
+            this.editor.chain().focus().insertContent(placeholder).run();
+        }
     }
 
     cancelEdit() {

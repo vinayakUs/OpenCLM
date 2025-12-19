@@ -1,0 +1,16 @@
+package com.example.bff.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+public class WebClientConfig {
+
+    @Bean("default-web-client")
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+
+    }
+
+}

@@ -28,3 +28,9 @@ spring:
         provider:
           spring:
             issuer-uri: http://localhost:9000
+
+
+app:
+  apis:
+    workflow: ''
+    storage: ''

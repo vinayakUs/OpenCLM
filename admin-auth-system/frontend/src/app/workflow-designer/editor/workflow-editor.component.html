@@ -1,3 +1,27 @@
+<style>
+    .breadcrumb {
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .breadcrumb span {
+        cursor: pointer;
+        color: #1976d2;
+    }
+
+    .breadcrumb span.active {
+        font-weight: bold;
+        cursor: default;
+        color: #000;
+    }
+
+    .separator {
+        margin: 0 6px;
+        color: #999;
+    }
+</style>
+
+
 <div class="editor-layout">
     <!-- Custom Editor Navbar -->
     <header class="editor-navbar">
@@ -36,8 +60,14 @@
                                 <span class="var-label">{{ v.uiLabel || 'Untitled' }}</span>
                                 <span class="type-badge">{{ v.type }}</span>
                             </div>
-                            <span class="material-icons expand-icon">{{ expandedIndex === i ? 'expand_less' :
-                                'expand_more' }}</span>
+                            <div class="header-actions">
+                                <button class="btn-icon-small" (click)="insertVariable(v, $event)"
+                                    title="Insert Variable" *ngIf="v.name">
+                                    <span class="material-icons" style="font-size: 18px;">input</span>
+                                </button>
+                                <span class="material-icons expand-icon">{{ expandedIndex === i ? 'expand_less' :
+                                    'expand_more' }}</span>
+                            </div>
                         </div>
 
                         <!-- Card Body (Expandable) -->
@@ -101,146 +131,269 @@
 
         <div class="col-right">
             <div class="scroll-content">
-                <!-- Initial Upload State -->
-                <div class="upload-container" *ngIf="!uploadedFile">
-                    <h2>Upload Document</h2>
-                    <div class="upload-box">
-                        <span class="material-icons upload-icon">cloud_upload</span>
-                        <h3>Upload a Paper</h3>
-                        <p>Select a <strong>.docx</strong> file to begin creating your workflow.</p>
 
-                        <input type="file" #fileInput (change)="onFileSelected($event)" accept=".docx" hidden>
-                        <button class="btn-primary" (click)="fileInput.click()">
-                            Choose File
-                        </button>
+
+                <nav class="breadcrumb">
+                    @for(breadcrumb of breadcrumbs; track breadcrumb.key){
+                    <span class="breadcrumb-item" (click)="selectTab(breadcrumb.key)"
+                        [class.active]="breadcrumb.key === current && !isDisabled(breadcrumb.key)"
+                        [class.disabled]="isDisabled(breadcrumb.key)">
+                        {{breadcrumb.label}}
+                    </span>
+                    @if(breadcrumb.key !== breadcrumbs[breadcrumbs.length - 1].key){
+                    <span class="breadcrumb-separator">></span>
+                    }
+                    }
+                </nav>
+
+
+
+
+                <!-- Content Area -->
+                <div [ngSwitch]="current">
+
+                    <div *ngSwitchCase="'home'">
+                        <!-- Initial Upload State -->
+                        <div class="upload-container">
+                            <div class="upload-card">
+                                <!-- No File State -->
+                                <ng-container *ngIf="!uploadedFile">
+                                    <span class="material-icons upload-icon">cloud_upload</span>
+                                    <h3>Upload Contract Template</h3>
+                                    <p>Select a <strong>.docx</strong> file to begin creating your workflow. This file
+                                        will serve as the base template.</p>
+
+                                    <input type="file" #fileInput (change)="onFileSelected($event)" accept=".docx"
+                                        hidden>
+                                    <button class="btn-primary btn-large" (click)="fileInput.click()">
+                                        Choose File
+                                    </button>
+                                </ng-container>
+
+                                <!-- File Uploaded State -->
+                                <div class="file-meta-card" *ngIf="uploadedFile">
+                                    <span class="material-icons upload-icon" style="color: #34a853;">check_circle</span>
+                                    <h3>Template Uploaded</h3>
+
+                                    <div class="file-info">
+                                        <span class="material-icons file-icon">description</span>
+                                        <div class="file-details">
+                                            <h4>{{ uploadedFile.name }}</h4>
+                                            <span>{{ (uploadedFile.size / 1024).toFixed(2) }} KB</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="file-actions">
+                                        <input type="file" #changeInput (change)="onFileSelected($event)" accept=".docx"
+                                            hidden>
+                                        <button class="btn-outline" (click)="changeInput.click()">Change File</button>
+                                        <button class="btn-primary btn-large" (click)="selectTab('contracts')">Continue
+                                            to Editor</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Canvas State (After Upload) -->
-                <div class="canvas-view" *ngIf="uploadedFile">
-                    <div class="canvas-header">
-                        <h2>{{ uploadedFile.name }}</h2>
-                        <button class="btn-text" (click)="uploadedFile = null">Change File</button>
-                    </div>
+                    <div *ngSwitchCase="'contracts'">
+                        <!-- Canvas State (After Upload) -->
+                        <div class="canvas-view" *ngIf="uploadedFile">
+                            <!-- Header Removed -->
 
-                    <div class="canvas-placeholder editor-wrapper">
-                        <!-- Toolbar -->
-                        <div class="editor-toolbar" *ngIf="editor">
-                            <!-- History -->
-                            <div class="button-group">
-                                <button (click)="editor.chain().focus().undo().run()" [disabled]="!editor.can().undo()"
-                                    title="Undo">
-                                    <span class="material-icons">undo</span>
-                                </button>
-                                <button (click)="editor.chain().focus().redo().run()" [disabled]="!editor.can().redo()"
-                                    title="Redo">
-                                    <span class="material-icons">redo</span>
-                                </button>
-                            </div>
+                            <div class="canvas-placeholder editor-wrapper">
+                                <!-- Toolbar -->
+                                <div class="editor-toolbar" *ngIf="editor">
+                                    <!-- History -->
+                                    <div class="button-group">
+                                        <button (click)="editor.chain().focus().undo().run()"
+                                            [disabled]="!editor.can().undo()" title="Undo">
+                                            <span class="material-icons">undo</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().redo().run()"
+                                            [disabled]="!editor.can().redo()" title="Redo">
+                                            <span class="material-icons">redo</span>
+                                        </button>
+                                    </div>
 
-                            <div class="divider-vertical"></div>
+                                    <div class="divider-vertical"></div>
 
-                            <!-- Structure -->
-                            <div class="button-group">
-                                <button (click)="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-                                    [class.is-active]="editor.isActive('heading', { level: 1 })" title="Heading 1">
-                                    <span class="material-icons">looks_one</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleBulletList().run()"
-                                    [class.is-active]="editor.isActive('bulletList')" title="Bullet List">
-                                    <span class="material-icons">format_list_bulleted</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleOrderedList().run()"
-                                    [class.is-active]="editor.isActive('orderedList')" title="Ordered List">
-                                    <span class="material-icons">format_list_numbered</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleBlockquote().run()"
-                                    [class.is-active]="editor.isActive('blockquote')" title="Blockquote">
-                                    <span class="material-icons">format_quote</span>
-                                </button>
-                            </div>
+                                    <!-- Structure -->
+                                    <div class="button-group">
+                                        <button (click)="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+                                            [class.is-active]="editor.isActive('heading', { level: 1 })"
+                                            title="Heading 1">
+                                            <span class="material-icons">looks_one</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleBulletList().run()"
+                                            [class.is-active]="editor.isActive('bulletList')" title="Bullet List">
+                                            <span class="material-icons">format_list_bulleted</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleOrderedList().run()"
+                                            [class.is-active]="editor.isActive('orderedList')" title="Ordered List">
+                                            <span class="material-icons">format_list_numbered</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleBlockquote().run()"
+                                            [class.is-active]="editor.isActive('blockquote')" title="Blockquote">
+                                            <span class="material-icons">format_quote</span>
+                                        </button>
+                                    </div>
 
-                            <div class="divider-vertical"></div>
+                                    <div class="divider-vertical"></div>
 
-                            <!-- Formatting -->
-                            <div class="button-group">
-                                <button (click)="editor.chain().focus().toggleBold().run()"
-                                    [class.is-active]="editor.isActive('bold')" title="Bold">
-                                    <span class="material-icons">format_bold</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleItalic().run()"
-                                    [class.is-active]="editor.isActive('italic')" title="Italic">
-                                    <span class="material-icons">format_italic</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleStrike().run()"
-                                    [class.is-active]="editor.isActive('strike')" title="Strike">
-                                    <span class="material-icons">strikethrough_s</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleCode().run()"
-                                    [class.is-active]="editor.isActive('code')" title="Code">
-                                    <span class="material-icons">code</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleUnderline().run()"
-                                    [class.is-active]="editor.isActive('underline')" title="Underline">
-                                    <span class="material-icons">format_underlined</span>
-                                </button>
-                                <button (click)="editor.chain().focus().unsetAllMarks().run()" title="Clear Formatting">
-                                    <span class="material-icons">format_clear</span>
-                                </button>
-                            </div>
+                                    <!-- Formatting -->
+                                    <div class="button-group">
+                                        <button (click)="editor.chain().focus().toggleBold().run()"
+                                            [class.is-active]="editor.isActive('bold')" title="Bold">
+                                            <span class="material-icons">format_bold</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleItalic().run()"
+                                            [class.is-active]="editor.isActive('italic')" title="Italic">
+                                            <span class="material-icons">format_italic</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleStrike().run()"
+                                            [class.is-active]="editor.isActive('strike')" title="Strike">
+                                            <span class="material-icons">strikethrough_s</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleCode().run()"
+                                            [class.is-active]="editor.isActive('code')" title="Code">
+                                            <span class="material-icons">code</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleUnderline().run()"
+                                            [class.is-active]="editor.isActive('underline')" title="Underline">
+                                            <span class="material-icons">format_underlined</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().unsetAllMarks().run()"
+                                            title="Clear Formatting">
+                                            <span class="material-icons">format_clear</span>
+                                        </button>
+                                    </div>
 
-                            <div class="divider-vertical"></div>
+                                    <div class="divider-vertical"></div>
 
-                            <!-- Sub/Sup -->
-                            <div class="button-group">
-                                <button (click)="editor.chain().focus().toggleSubscript().run()"
-                                    [class.is-active]="editor.isActive('subscript')" title="Subscript">
-                                    <span class="material-icons">subscript</span>
-                                </button>
-                                <button (click)="editor.chain().focus().toggleSuperscript().run()"
-                                    [class.is-active]="editor.isActive('superscript')" title="Superscript">
-                                    <span class="material-icons">superscript</span>
-                                </button>
-                            </div>
+                                    <!-- Sub/Sup -->
+                                    <div class="button-group">
+                                        <button (click)="editor.chain().focus().toggleSubscript().run()"
+                                            [class.is-active]="editor.isActive('subscript')" title="Subscript">
+                                            <span class="material-icons">subscript</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleSuperscript().run()"
+                                            [class.is-active]="editor.isActive('superscript')" title="Superscript">
+                                            <span class="material-icons">superscript</span>
+                                        </button>
+                                    </div>
 
-                            <div class="divider-vertical"></div>
+                                    <div class="divider-vertical"></div>
 
-                            <!-- Alignment -->
-                            <div class="button-group">
-                                <button (click)="editor.chain().focus().setTextAlign('left').run()"
-                                    [class.is-active]="editor.isActive({ textAlign: 'left' })" title="Align Left">
-                                    <span class="material-icons">format_align_left</span>
-                                </button>
-                                <button (click)="editor.chain().focus().setTextAlign('center').run()"
-                                    [class.is-active]="editor.isActive({ textAlign: 'center' })" title="Align Center">
-                                    <span class="material-icons">format_align_center</span>
-                                </button>
-                                <button (click)="editor.chain().focus().setTextAlign('right').run()"
-                                    [class.is-active]="editor.isActive({ textAlign: 'right' })" title="Align Right">
-                                    <span class="material-icons">format_align_right</span>
-                                </button>
-                                <button (click)="editor.chain().focus().setTextAlign('justify').run()"
-                                    [class.is-active]="editor.isActive({ textAlign: 'justify' })" title="Justify">
-                                    <span class="material-icons">format_align_justify</span>
-                                </button>
-                            </div>
+                                    <!-- Alignment -->
+                                    <div class="button-group">
+                                        <button (click)="editor.chain().focus().setTextAlign('left').run()"
+                                            [class.is-active]="editor.isActive({ textAlign: 'left' })"
+                                            title="Align Left">
+                                            <span class="material-icons">format_align_left</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().setTextAlign('center').run()"
+                                            [class.is-active]="editor.isActive({ textAlign: 'center' })"
+                                            title="Align Center">
+                                            <span class="material-icons">format_align_center</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().setTextAlign('right').run()"
+                                            [class.is-active]="editor.isActive({ textAlign: 'right' })"
+                                            title="Align Right">
+                                            <span class="material-icons">format_align_right</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().setTextAlign('justify').run()"
+                                            [class.is-active]="editor.isActive({ textAlign: 'justify' })"
+                                            title="Justify">
+                                            <span class="material-icons">format_align_justify</span>
+                                        </button>
+                                    </div>
 
-                            <div class="divider-vertical"></div>
+                                    <div class="divider-vertical"></div>
 
-                            <!-- Insert -->
-                            <div class="button-group">
-                                <button (click)="addImage()" title="Add Image">
-                                    <span class="material-icons">add_photo_alternate</span>
-                                    <span style="font-size: 13px; margin-left: 4px;">Add</span>
-                                </button>
+                                    <!-- Insert -->
+                                    <div class="button-group">
+                                        <button (click)="addImage()" title="Add Image">
+                                            <span class="material-icons">add_photo_alternate</span>
+                                            <span style="font-size: 13px; margin-left: 4px;">Add</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Editor Content -->
+                                <tiptap-bubble-menu [editor]="editor">
+                                    <div class="bubble-menu">
+                                        <button (click)="editor.chain().focus().toggleBold().run()"
+                                            [class.is-active]="editor.isActive('bold')" title="Bold">
+                                            <span class="material-icons">format_bold</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleItalic().run()"
+                                            [class.is-active]="editor.isActive('italic')" title="Italic">
+                                            <span class="material-icons">format_italic</span>
+                                        </button>
+                                        <button (click)="editor.chain().focus().toggleStrike().run()"
+                                            [class.is-active]="editor.isActive('strike')" title="Strike">
+                                            <span class="material-icons">strikethrough_s</span>
+                                        </button>
+                                        <div class="bubble-divider"></div>
+                                        <button (click)="editor.chain().focus().toggleCode().run()"
+                                            [class.is-active]="editor.isActive('code')" title="Code">
+                                            <span class="material-icons">code</span>
+                                        </button>
+                                    </div>
+                                </tiptap-bubble-menu>
+
+                                <div tiptap [editor]="editor"
+                                    style="height: calc(100% - 48px); overflow-y: auto; outline: none;"></div>
                             </div>
                         </div>
 
-                        <!-- Editor Content -->
-                        <div tiptap [editor]="editor"
-                            style="height: calc(100% - 48px); overflow-y: auto; outline: none;"></div>
+
+
                     </div>
+
+                    <div *ngSwitchCase="'details'">
+                        <h3>Contract Details</h3>
+                        <p>Contract detail view</p>
+                    </div>
+
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </div>
         </div>
     </div>
