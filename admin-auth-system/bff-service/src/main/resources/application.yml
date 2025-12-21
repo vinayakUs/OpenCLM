@@ -22,15 +22,24 @@ spring:
             client-id: bff-client
             client-secret: secret
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/api/login/oauth2/code/bff-client"
+            redirect-uri: "{baseUrl}/api/login/oauth2/code/{registrationId}"
             scope: openid, profile, email, offline_access
             client-name: BFF Client
         provider:
           spring:
             issuer-uri: http://localhost:9000
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 
 
 app:
   apis:
-    workflow: ''
-    storage: ''
+    workflow: 'http://localhost:8084'
+    storage: 'http://localhost:8083'
+logging:
+  level:
+    org.springframework.security: DEBUG

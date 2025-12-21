@@ -21,11 +21,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -37,7 +38,12 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.boot.CommandLineRunner;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import com.example.auth.security.services.UserDetailsImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -147,6 +153,37 @@ public class AuthorizationServerConfig {
             throw new IllegalStateException(ex);
         }
         return keyPair;
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(){
+        return  context -> {
+            if( !(context.getPrincipal() instanceof UsernamePasswordAuthenticationToken auth)){
+                return;
+            }
+            Object principal = auth.getPrincipal();
+            if(!(principal instanceof UserDetailsImpl user)){
+                return;
+            }
+            //ACCESS_TOKEN - authorization info for APIs no need for name email etc
+            if(OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())){
+                context.getClaims().subject(user.getId().toString());
+                context.getClaims().claim("user_id", user.getId());
+                context.getClaims().claim("roles" ,
+                        auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
+                        );
+
+            }
+
+            //ID TOKEN -- frontend display
+            if(OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())){
+                context.getClaims().subject(user.getId().toString());
+                context.getClaims().claim("name", user.getName());
+                context.getClaims().claim("email", user.getEmail());
+            }
+
+
+        };
     }
 
     @Bean

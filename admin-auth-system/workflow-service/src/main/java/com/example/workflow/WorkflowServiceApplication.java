@@ -9,6 +9,7 @@ import java.util.TimeZone;
 public class WorkflowServiceApplication {
 
     public static void main(String[] args) {
+        System.setProperty("user.timezone", "Asia/Kolkata");
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
         SpringApplication.run(WorkflowServiceApplication.class, args);
     }

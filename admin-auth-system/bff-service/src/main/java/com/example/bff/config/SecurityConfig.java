@@ -15,7 +15,8 @@ public class SecurityConfig {
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                        ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+                        ClientRegistrationRepository clientRegistrationRepository,
+                        com.example.bff.service.CustomOidcUserService customOidcUserService) throws Exception {
                 OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
                                 clientRegistrationRepository);
                 logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:4200/login?logout");
@@ -26,6 +27,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/user").permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .oidcUserService(customOidcUserService))
                                                 .authorizationEndpoint(authorization -> authorization
                                                                 .baseUri("/api/oauth2/authorization"))
                                                 .redirectionEndpoint(redirection -> redirection

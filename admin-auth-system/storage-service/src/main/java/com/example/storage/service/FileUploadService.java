@@ -1,8 +1,8 @@
-package com.example.storageservice.services;
+package com.example.storage.service;
 
-import com.example.storageservice.dto.FileUploadResponse;
-import com.example.storageservice.entity.FileStorage;
-import com.example.storageservice.repository.FileStorageRepository;
+import com.example.storage.dto.FileUploadResponse;
+import com.example.storage.entity.FileStorage;
+import com.example.storage.repository.FileStorageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +19,11 @@ public class FileUploadService {
 
     public FileUploadResponse uploadFile(MultipartFile file, UUID uploadedBy) {
 
-        String folder =     "uploads/" + LocalDate.now() + "/" ;
-        String s3Path = s3Service.uploadFile(folder,file);
+        String folder = "uploads/" + LocalDate.now() + "/";
+        String s3Path = s3Service.uploadFile(folder, file);
 
-//        save metadata in db
-        FileStorage  entity = new FileStorage();
+        // save metadata in db
+        FileStorage entity = new FileStorage();
         entity.setOriginalName(file.getOriginalFilename());
         entity.setFilePath(s3Path);
         entity.setMimeType(file.getContentType());
@@ -37,11 +37,8 @@ public class FileUploadService {
                 entity.getOriginalName(),
                 entity.getFilePath(),
                 entity.getMimeType(),
-                entity.getSizeInBytes()
-        );
-
+                entity.getSizeInBytes());
 
     }
-
 
 }

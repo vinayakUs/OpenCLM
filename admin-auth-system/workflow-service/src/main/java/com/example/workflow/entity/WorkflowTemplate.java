@@ -1,8 +1,8 @@
 package com.example.workflow.entity;
 
-
 import jakarta.persistence.*;
-import lombok.Data;
+import com.example.workflow.dto.WorkflowStatus;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,29 +16,29 @@ public class WorkflowTemplate {
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
 
-    @Column(name ="name", nullable = false )
+    @Column(name = "name", nullable = false)
     public String name;
 
-    @Column(name ="description" )
+    @Column(name = "description")
     public String description;
 
-    @Column(name = "template_file_id" ,nullable = false )
-    public UUID template_file_id;
+    @Column(name = "template_file_id", nullable = false)
+    public UUID templateFileId;
 
-    @Column(name = "current_status" )
-    public String current_status = "DRAFT"; //DRAFT or LIVE
+    @Enumerated(EnumType.STRING)
+    @Column(name = "current_status")
+    public WorkflowStatus currentStatus = WorkflowStatus.DRAFT; // DRAFT or PUBLISHED
 
-    @Column(name = "version" )
-    public Integer version=1;
+    @Column(name = "version")
+    public Integer version = 1;
 
-    @Column(name = "created_by" ,nullable = false )
-    public UUID created_by;
+    @Column(name = "created_by", nullable = false)
+    public UUID createdBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
 }
-

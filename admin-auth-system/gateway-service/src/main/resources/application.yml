@@ -6,6 +6,8 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      httpclient:
+        max-header-size: 30MB
       routes:
         - id: auth-server
           uri: http://localhost:9000
@@ -22,6 +24,11 @@ spring:
           predicates:
             - Path=/storage/**
 
+        - id: workflow-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/workflow/**
+
       globalcors:
         cors-configurations:
           '[/**]':
@@ -36,4 +43,15 @@ spring:
         jwt:
           jwk-set-uri: http://localhost:9000/oauth2/jwks
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.server: DEBUG
+    reactor.netty.http.client: DEBUG
 

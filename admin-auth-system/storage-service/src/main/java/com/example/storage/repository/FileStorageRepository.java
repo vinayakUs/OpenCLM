@@ -1,7 +1,6 @@
-package com.example.storageservice.repository;
+package com.example.storage.repository;
 
-import com.example.storageservice.dto.FileUploadResponse;
-import com.example.storageservice.entity.FileStorage;
+import com.example.storage.entity.FileStorage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

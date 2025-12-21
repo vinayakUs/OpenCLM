@@ -1,10 +1,14 @@
 package com.example.workflow.service;
 
-import com.example.workflow.dto.WorkflowTemplateDTO;
+import com.example.workflow.dto.WorkflowCreateRequest;
+import com.example.workflow.dto.WorkflowResponse;
+import com.example.workflow.dto.WorkflowUpdateRequest;
 import java.util.UUID;
 
 public interface WorkflowService {
-    WorkflowTemplateDTO getWorkflowTemplate(UUID id);
+    WorkflowResponse getWorkflowTemplate(UUID id);
 
-    WorkflowTemplateDTO updateWorkflowTemplate(UUID id, WorkflowTemplateDTO dto);
+    UUID updateWorkflowTemplate(UUID id, WorkflowUpdateRequest dto);
+
+    UUID postWorkflowTemplate(WorkflowCreateRequest dto,UUID created_by);
 }

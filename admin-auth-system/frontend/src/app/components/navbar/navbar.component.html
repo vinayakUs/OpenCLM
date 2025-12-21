@@ -41,6 +41,11 @@
       <span class="material-icons arrow">arrow_drop_down</span>
 
       <div class="dropdown" *ngIf="isDropdownOpen">
+        <div class="user-details" *ngIf="user$ | async as user">
+          <div class="user-name">{{ user.name }}</div>
+          <div class="user-email">{{ user.email }}</div>
+        </div>
+        <div class="divider"></div>
         <button class="dropdown-item logout-btn" (click)="logout()">
           <span class="material-icons">logout</span>
           Logout

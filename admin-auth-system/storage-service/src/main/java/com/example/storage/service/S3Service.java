@@ -1,4 +1,4 @@
-package com.example.storageservice.services;
+package com.example.storage.service;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class S3Service {
     @Value("${app.bucket.name}")
     private String bucketName;
 
-    public String uploadFile(String folder,MultipartFile file)  {
+    public String uploadFile(String folder, MultipartFile file) {
         String key = folder + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
@@ -34,16 +34,14 @@ public class S3Service {
                 .contentType(file.getContentType())
                 .build();
 
-        try{
+        try {
             s3Client.putObject(
                     putRequest,
-                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
-            );
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("Failed to upload file", e);
         }
-
 
         return "s3://" + bucketName + "/" + key;
     }

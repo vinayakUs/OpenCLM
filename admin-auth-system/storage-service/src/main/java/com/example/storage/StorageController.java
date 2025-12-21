@@ -1,4 +1,4 @@
-package com.example.storageservice;
+package com.example.storage;
 
 import io.awspring.cloud.s3.S3Template;
 import org.springframework.http.ResponseEntity;

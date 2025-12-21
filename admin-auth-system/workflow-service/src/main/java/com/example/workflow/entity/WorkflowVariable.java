@@ -1,8 +1,10 @@
 package com.example.workflow.entity;
 
 
+import com.example.workflow.dto.VariableDataType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,6 +13,7 @@ import java.util.UUID;
 @Table(name = "workflow_variable")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class WorkflowVariable {
 
     @Id
@@ -25,7 +28,8 @@ public class WorkflowVariable {
     private String variableName;   // e.g. party_name
 
     @Column(name = "data_type", nullable = false)
-    private String dataType;       // STRING, DATE, CHECKBOX
+    @Enumerated(EnumType.STRING)
+    private VariableDataType dataType;       // STRING, DATE, Int
 
     @Column(name = "label")
     private String label;          // Friendly UI label

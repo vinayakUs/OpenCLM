@@ -1,16 +1,16 @@
-package com.example.workflow.dto;
+package com.example.bff.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class WorkflowTemplateDTO {
+public class WorkflowResponse {
     private UUID id;
     private String name;
     private String description;
     private UUID template_file_id;
-    private String current_status;
+    private WorkflowStatus current_status;
     private Integer version;
     private UUID created_by;
     private LocalDateTime createdAt;

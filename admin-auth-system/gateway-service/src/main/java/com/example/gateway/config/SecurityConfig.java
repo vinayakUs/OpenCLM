@@ -18,7 +18,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/**", "/oauth2/**", "/login/**", "/api/**").permitAll()
                         // storage-service permit all
-                        .pathMatchers("/storage/**").permitAll()
+//                        .pathMatchers("/storage/**").permitAll()
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
