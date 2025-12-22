@@ -1,9 +1,6 @@
 package com.example.workflow.service.impl;
 
-import com.example.workflow.dto.VariableResponse;
-import com.example.workflow.dto.WorkflowCreateRequest;
-import com.example.workflow.dto.WorkflowResponse;
-import com.example.workflow.dto.WorkflowUpdateRequest;
+import com.example.workflow.dto.*;
 import com.example.workflow.entity.WorkflowTemplate;
 import com.example.workflow.entity.WorkflowVariable;
 import com.example.workflow.exception.WorkflowNotFoundException;
@@ -58,12 +55,12 @@ public class WorkflowServiceImpl implements WorkflowService {
         WorkflowTemplate existingTemplate = workflowTemplateRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Workflow Template not found"));
 
-        if (dto.getName() != null)
-            existingTemplate.setName(dto.getName());
-        if (dto.getDescription() != null)
-            existingTemplate.setDescription(dto.getDescription());
-        if (dto.getCurrentStatus() != null)
-            existingTemplate.setCurrentStatus(dto.getCurrentStatus());
+//        if (dto.getName() != null)
+//            existingTemplate.setName(dto.getName());
+//        if (dto.getDescription() != null)
+//            existingTemplate.setDescription(dto.getDescription());
+//        if (dto.getCurrentStatus() != null)
+//            existingTemplate.setCurrentStatus(dto.getCurrentStatus());
 
         // Save
         WorkflowTemplate saved = workflowTemplateRepository.save(existingTemplate);
@@ -74,28 +71,32 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     public UUID postWorkflowTemplate(WorkflowCreateRequest dto,UUID created_by) {
-        WorkflowTemplate workflowTemplate = new WorkflowTemplate();
-        workflowTemplate.setName(dto.getName());
-        workflowTemplate.setDescription(dto.getDescription());
-        workflowTemplate.setTemplateFileId(dto.getTemplateFileId());
-        workflowTemplate.setCurrentStatus(dto.getCurrentStatus());
-        workflowTemplate.setCreatedBy(created_by);
+        WorkflowTemplate workflowTemplate = new WorkflowTemplate(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getTemplateFileId()
+        );
+        // change status to publish
+        if(workflowTemplate.currentStatus == WorkflowStatus.PUBLISHED){
+            workflowTemplate.publish();
+        }
 
         WorkflowTemplate saved = workflowTemplateRepository.save(workflowTemplate);
 
-        List<WorkflowVariable> variables = Arrays.stream(dto.getVariables()).map(
-                x-> WorkflowVariable.builder()
-                        .workflowId(saved.getId())
-                        .variableName(x.getVariableName())
-                        .dataType(x.getDataType())
-                        .label(x.getLabel())
-                        .required(x.getRequired())
-                        .defaultValue(x.getDefaultValue())
-                        .sortOrder(x.getSortValue())
-                        .build()
-        ).toList();
+//        List<WorkflowVariable> variables = Arrays.stream(dto.getVariables()).map(
+//                x-> WorkflowVariable.builder()
+//                        .workflowId(saved.getId())
+//                        .variableName(x.getVariableName())
+//                        .dataType(x.getDataType())
+//                        .label(x.getLabel())
+//                        .required(x.getRequired())
+//                        .defaultValue(x.getDefaultValue())
+//                        .sortOrder(x.getSortValue())
+//                        .build()
+//        ).toList();
 
-        workflowVariableRepository.saveAll(variables);
+//        workflowVariableRepository.saveAll(variables);
+
         return saved.getId();
     }
 }
