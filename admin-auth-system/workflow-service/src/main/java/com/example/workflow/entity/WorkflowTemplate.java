@@ -1,7 +1,7 @@
 package com.example.workflow.entity;
 
 import jakarta.persistence.*;
-import com.example.workflow.dto.WorkflowStatus;
+import com.example.common.dto.WorkflowStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,11 +12,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor
-@EqualsAndHashCode(
-        onlyExplicitlyIncluded = true,
-        callSuper = false
-)
-public class WorkflowTemplate extends AuditableEntity{
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class WorkflowTemplate extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,15 +33,17 @@ public class WorkflowTemplate extends AuditableEntity{
     public UUID templateFileId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "current_status" ,nullable = false)
+    @Column(name = "current_status", nullable = false)
     public WorkflowStatus currentStatus = WorkflowStatus.DRAFT; // DRAFT or PUBLISHED
 
     @Column(name = "version")
     public Integer version = 1;
 
-    /* ======================
-           Domain behavior
-    ====================== */
+    /*
+     * ======================
+     * Domain behavior
+     * ======================
+     */
 
     public void publish() {
         this.currentStatus = WorkflowStatus.PUBLISHED;

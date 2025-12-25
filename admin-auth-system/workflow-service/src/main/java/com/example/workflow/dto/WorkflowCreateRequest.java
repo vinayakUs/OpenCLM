@@ -2,6 +2,7 @@ package com.example.workflow.dto;
 
 import lombok.Data;
 import java.util.UUID;
+import com.example.common.dto.WorkflowStatus;
 
 @Data
 public class WorkflowCreateRequest {

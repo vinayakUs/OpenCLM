@@ -3,8 +3,8 @@ package com.example.auth.controller;
 import com.example.auth.entity.ERole;
 import com.example.auth.entity.Role;
 import com.example.auth.entity.User;
-import com.example.auth.payload.request.SignupRequest;
-import com.example.auth.payload.response.MessageResponse;
+import com.example.auth.dto.request.SignupRequest;
+import com.example.auth.dto.response.MessageResponse;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -54,3 +54,4 @@ public class AuthController {
                 return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         }
 }
+

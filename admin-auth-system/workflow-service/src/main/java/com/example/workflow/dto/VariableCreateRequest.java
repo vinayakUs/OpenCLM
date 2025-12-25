@@ -1,6 +1,7 @@
 package com.example.workflow.dto;
 
 import lombok.Data;
+import com.example.common.dto.VariableDataType;
 
 @Data
 public class VariableCreateRequest {
@@ -11,5 +12,3 @@ public class VariableCreateRequest {
     private String defaultValue;
     private Integer sortValue;
 }
-
-

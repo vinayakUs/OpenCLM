@@ -9,6 +9,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
+import com.example.bff.domain.user.service.CustomOidcUserService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -16,7 +18,7 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                         ClientRegistrationRepository clientRegistrationRepository,
-                        com.example.bff.service.CustomOidcUserService customOidcUserService) throws Exception {
+                        CustomOidcUserService customOidcUserService) throws Exception {
                 OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
                                 clientRegistrationRepository);
                 logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:4200/login?logout");

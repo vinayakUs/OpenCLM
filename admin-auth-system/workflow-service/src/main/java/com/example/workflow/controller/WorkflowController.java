@@ -1,9 +1,9 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.dto.ApiResponse;
-import com.example.workflow.dto.WorkflowCreateRequest;
-import com.example.workflow.dto.WorkflowResponse;
-import com.example.workflow.dto.WorkflowUpdateRequest;
+import com.example.workflow.dto.*;
+import com.example.common.dto.ApiResponse;
+import com.example.common.dto.PageResponse;
+import com.example.common.dto.WorkflowResponse;
 import com.example.workflow.service.WorkflowService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +28,12 @@ public class WorkflowController {
         return ApiResponse.success(res);
     }
 
+    @GetMapping("/")
+    public ApiResponse<PageResponse<WorkflowResponse>> getAllWorkflow(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.success(workflowService.getAllWorkflow(page, size));
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<UUID> updateWorkflowTemplate(@PathVariable UUID id,
             @RequestBody WorkflowUpdateRequest dto) {
@@ -35,11 +41,12 @@ public class WorkflowController {
         return ApiResponse.success(uuid);
     }
 
-    @PostMapping(value = "/" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<UUID> postWorkflowTemplate(@RequestBody WorkflowCreateRequest dto , @AuthenticationPrincipal Jwt jwt) {
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<UUID> postWorkflowTemplate(@RequestBody WorkflowCreateRequest dto,
+            @AuthenticationPrincipal Jwt jwt) {
         System.out.println(dto.toString());
         System.out.println(jwt.getSubject());
-        UUID uuid = workflowService.postWorkflowTemplate(dto,UUID.fromString(jwt.getSubject()));
+        UUID uuid = workflowService.postWorkflowTemplate(dto, UUID.fromString(jwt.getSubject()));
         System.out.println("success : " + uuid);
         return ApiResponse.success(uuid);
 

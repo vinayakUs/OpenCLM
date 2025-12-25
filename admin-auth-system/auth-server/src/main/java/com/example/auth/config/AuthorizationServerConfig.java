@@ -191,3 +191,4 @@ public class AuthorizationServerConfig {
         return AuthorizationServerSettings.builder().issuer("http://localhost:9000").build();
     }
 }
+
