@@ -8,19 +8,21 @@
     </div>
 
     <div class="workflow-grid">
-        <div class="workflow-card" *ngFor="let wf of workflows">
+        @for (wf of workflows(); track wf.id) {
+        <div class="workflow-card">
             <div class="card-header">
                 <span class="icon-box">
                     <span class="material-icons">account_tree</span>
                 </span>
-                <span class="status-badge" [class.published]="wf.status === 'Published'">{{ wf.status }}</span>
+                <span class="status-badge" [class.published]="wf.currentStatus === 'PUBLISHED'">{{ wf.currentStatus }}</span>
             </div>
-            <h3>{{ wf.title }}</h3>
+            <h3>{{ wf.name }}</h3>
             <p>{{ wf.description }}</p>
             <div class="card-footer">
-                <span class="date">{{ wf.date }}</span>
+                <span class="date">{{ wf.createdAt | date:'mediumDate' }}</span>
                 <button class="btn-text">Edit</button>
             </div>
         </div>
+        }
     </div>
 </div>

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ApiResponse } from '../models/api-response.model';
+import { Workflow, PageResponse } from '../models/workflow.model';
 
 @Injectable({
     providedIn: 'root'
@@ -13,5 +15,12 @@ export class ApiService {
 
     getHomeContent(): Observable<any> {
         return this.http.get(this.API_URL + 'home', { responseType: 'text', withCredentials: true });
+    }
+
+    getWorkflows(page: number, size: number): Observable<ApiResponse<PageResponse<Workflow>>> {
+        return this.http.get<ApiResponse<PageResponse<Workflow>>>(this.API_URL + 'workflows/', {
+            params: { page: page.toString(), size: size.toString() },
+            withCredentials: true
+        });
     }
 }

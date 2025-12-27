@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ApiService } from '../services/api.service';
+import { Workflow } from '../models/workflow.model';
 
 @Component({
   selector: 'app-workflow-designer',
@@ -9,16 +11,26 @@ import { Router } from '@angular/router';
   templateUrl: './workflow-designer.component.html',
   styleUrls: ['./workflow-designer.component.css']
 })
-export class WorkflowDesignerComponent {
+export class WorkflowDesignerComponent implements OnInit {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
 
-  workflows = [
-    { title: 'Onboarding Flow', description: 'Employee onboarding process automation', status: 'Published', date: '2023-10-01' },
-    { title: 'Invoice Approval', description: 'Multi-level approval for finance', status: 'Draft', date: '2023-11-15' },
-    { title: 'Leave Request', description: 'Holiday and sick leave management', status: 'Published', date: '2023-09-20' },
-    { title: 'Support Ticket', description: 'Customer support ticket routing', status: 'Draft', date: '2023-12-05' }
-  ];
+  workflows = signal<Workflow[]>([]);
 
-  constructor(private router: Router) { }
+  ngOnInit() {
+    this.loadWorkflows();
+  }
+
+  loadWorkflows() {
+    this.apiService.getWorkflows(0, 100).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.workflows.set(response.data.content);
+        }
+      },
+      error: (error) => console.error('Error fetching workflows:', error)
+    });
+  }
 
   createNew() {
     this.router.navigate(['/workflow-designer/editor']);
