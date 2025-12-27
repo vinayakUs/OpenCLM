@@ -14,7 +14,8 @@
                 <span class="icon-box">
                     <span class="material-icons">account_tree</span>
                 </span>
-                <span class="status-badge" [class.published]="wf.currentStatus === 'PUBLISHED'">{{ wf.currentStatus }}</span>
+                <span class="status-badge" [class.published]="wf.currentStatus === 'PUBLISHED'">{{ wf.currentStatus
+                    }}</span>
             </div>
             <h3>{{ wf.name }}</h3>
             <p>{{ wf.description }}</p>
@@ -24,5 +25,11 @@
             </div>
         </div>
         }
+    </div>
+
+    <div class="pagination-footer">
+        <button class="btn-text" (click)="prevPage()" [disabled]="currentPage() === 0">Previous</button>
+        <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+        <button class="btn-text" (click)="nextPage()" [disabled]="currentPage() >= totalPages() - 1">Next</button>
     </div>
 </div>
