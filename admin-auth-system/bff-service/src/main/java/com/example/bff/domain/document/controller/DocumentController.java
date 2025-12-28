@@ -28,6 +28,24 @@ public class DocumentController {
                     .body(Collections.singletonMap("error", "Failed to parse document: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/convert")
+    public ResponseEntity<byte[]> convertDocument(@RequestBody Map<String, String> request) {
+        try {
+            String html = request.get("html");
+            if (html == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            byte[] docxBytes = documentService.convertHtmlToDocx(html);
+
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"converted.docx\"")
+                    .contentType(org.springframework.http.MediaType
+                            .parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+                    .body(docxBytes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
-
-
