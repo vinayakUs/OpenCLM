@@ -1,13 +1,19 @@
-/* Layout */
+/* Layout Structure */
+:host {
+    display: block;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .editor-layout {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    height: 100%;
     background-color: #f8f9fa;
 }
 
-/* Custom Navbar */
+/* Navbar */
 .editor-navbar {
     height: 60px;
     background-color: white;
@@ -16,31 +22,21 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
-    flex-shrink: 0;
-    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    z-index: 10;
 }
 
-.nav-left,
-.nav-right {
+.nav-left {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
 }
 
-.icon-btn.back-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    color: #5f6368;
+.nav-right {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.icon-btn.back-btn:hover {
-    background-color: #f1f3f4;
+    gap: 12px;
 }
 
 .workflow-title {
@@ -52,182 +48,227 @@
 .title-input {
     font-size: 18px;
     font-weight: 500;
-    color: #202124;
-    border: 1px solid transparent;
-    padding: 4px 8px;
-    background: transparent;
-    width: 250px;
-}
-
-.title-input:hover {
-    border-color: #e0e0e0;
-}
-
-.title-input:focus {
+    border: none;
     outline: none;
-    border-color: #1a73e8;
-    background-color: #f8f9fa;
+    color: #1f2937;
+    background: transparent;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.title-input:hover,
+.title-input:focus {
+    background-color: #f3f4f6;
 }
 
 .status-draft {
     font-size: 12px;
-    background-color: #f1f3f4;
     padding: 2px 8px;
-    border-radius: 4px;
-    color: #5f6368;
-}
-
-/* Buttons */
-.btn-secondary,
-.btn-primary {
-    padding: 8px 16px;
-    border-radius: 4px;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-radius: 12px;
     font-weight: 500;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
     cursor: pointer;
-    font-size: 14px;
-}
-
-.btn-secondary {
-    background: white;
-    border: 1px solid #dadce0;
-    color: #3c4043;
-}
-
-.btn-primary {
-    background-color: #1a73e8;
-    color: white;
-    border: none;
-}
-
-.btn-icon-add {
-    background-color: #1a73e8;
-    color: white;
-    border: none;
+    padding: 8px;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #6b7280;
+    transition: background 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    transition: transform 0.1s;
+    transition: all 0.2s;
+    border: none;
 }
 
-.btn-icon-add:active {
-    transform: scale(0.95);
+.btn-primary {
+    background-color: #1976d2;
+    color: white;
 }
 
+.btn-primary:hover {
+    background-color: #1565c0;
+}
+
+.btn-secondary {
+    background-color: white;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn-text,
 .btn-text-danger {
     background: none;
     border: none;
-    color: #d93025;
     cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-size: 13px;
     padding: 4px 8px;
-    border-radius: 4px;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+    color: #1976d2;
+}
+
+.btn-text-danger {
+    color: #dc2626;
 }
 
 .btn-text-danger:hover {
-    background-color: #fce8e6;
+    background-color: #fee2e2;
+    border-radius: 4px;
 }
 
-.btn-text-danger .material-icons {
-    font-size: 16px;
-}
-
-/* Editor Container */
+/* Main Container */
 .editor-container {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
 
+/* Left Column */
 .col-left {
-    width: 350px;
+    width: 320px;
+    background-color: white;
     border-right: 1px solid #e0e0e0;
-    background-color: #ffffff;
     display: flex;
     flex-direction: column;
+    z-index: 5;
 }
 
-.col-right {
-    flex: 1;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-}
-
-.scroll-content {
-    overflow-y: auto;
-    height: 100%;
-    padding: 24px;
-}
-
-/* Variables Section */
 .section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f1f3f4;
 }
 
 .section-header h2 {
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b7280;
     margin: 0;
-    color: #202124;
+    letter-spacing: 0.5px;
 }
 
-/* Variables List - Minimalist Cards */
-.variables-list {
+.btn-icon-add {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1976d2;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.btn-icon-add:hover {
+    background-color: #eff6ff;
+}
+
+/* Right Column */
+.col-right {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 40px;
+}
+
+/* Variable Cards */
+.variables-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
 }
 
 .variable-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    background: white;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
     overflow: hidden;
-    transition: box-shadow 0.2s, border-color 0.2s;
 }
 
 .variable-card:hover {
-    border-color: #dadce0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .variable-card.expanded {
-    border-color: #1a73e8;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: #1976d2;
+    box-shadow: 0 4px 6px rgba(25, 118, 210, 0.1);
 }
 
 .card-header {
     padding: 12px 16px;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
     background-color: #fff;
-    user-select: none;
 }
 
-.variable-card.expanded .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #f1f3f4;
+.card-header:hover {
+    background-color: #f9fafb;
 }
 
 .header-info {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.var-label {
+    font-weight: 500;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.type-badge {
+    font-size: 11px;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
 }
 
 .header-actions {
@@ -240,362 +281,374 @@
     background: none;
     border: none;
     padding: 4px;
-    border-radius: 4px;
     cursor: pointer;
-    color: #5f6368;
+    color: #6b7280;
+    border-radius: 4px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
 }
 
 .btn-icon-small:hover {
-    background-color: #e8f0fe;
-    color: #1a73e8;
-}
-
-.var-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #3c4043;
-}
-
-.type-badge {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background-color: #f1f3f4;
-    color: #5f6368;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.expand-icon {
-    font-size: 20px;
-    color: #5f6368;
+    background-color: #e5e7eb;
+    color: #1f2937;
 }
 
 .card-body {
     padding: 16px;
-    animation: slideDown 0.2s ease-out;
+    border-top: 1px solid #f3f4f6;
+    background-color: #fafafa;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
+.view-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.view-label {
+    color: #6b7280;
+}
+
+.view-value {
+    color: #111827;
+    font-weight: 500;
 }
 
 .form-group {
     margin-bottom: 12px;
 }
 
-.form-group label {
-    display: block;
-    font-size: 11px;
-    text-transform: uppercase;
-    color: #5f6368;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-}
-
-/* Inputs: high specificity to override defaults */
-.variable-card .form-group input,
-.variable-card .form-group select,
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #dadce0;
-    border-radius: 4px;
-    font-size: 13px;
-    box-sizing: border-box;
-    background-color: #ffffff !important;
-    color: #000000 !important;
-}
-
-.form-group input.readonly-input {
-    background-color: #f8f9fa;
-    color: #5f6368;
-    cursor: not-allowed;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    outline: none;
-    border-color: #1a73e8;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
 }
 
 .card-footer {
     display: flex;
     justify-content: flex-end;
-    margin-top: 16px;
+    margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid #f1f3f4;
+    border-top: 1px solid #e5e7eb;
 }
 
-.empty-state {
-    text-align: center;
-    color: #9aa0a6;
-    font-size: 13px;
-    padding: 32px 0;
-}
-
-/* Upload & Canvas Styles (Preserved) */
-.upload-container {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.upload-box {
-    text-align: center;
-    padding: 40px;
-    border: 2px dashed #dadce0;
-    border-radius: 8px;
-    background: white;
-}
-
+/* Editor Toolbar & Canvas */
 .canvas-view {
-    padding: 24px;
-    height: 100%;
-    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+.editor-wrapper {
+    width: 100%;
+    max-width: 850px;
+    /* A4 width */
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    min-height: 1000px;
 }
 
-/* Button Group for Toolbar */
-.button-group {
+.editor-toolbar {
+    padding: 8px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #fff;
     display: flex;
     align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-wrap: wrap;
+}
+
+.button-group {
+    display: flex;
     gap: 2px;
 }
 
-/* Editor Wrapper - Minimalist Paper Look */
-.editor-wrapper {
-    flex: 1;
-    background: white;
-    /* Removed border */
-    border-radius: 0;
-    /* Sharp edges or subtle radius depending on preference, keeping 0 for full doc feel or 2px */
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15), 0 1px 2px rgba(60, 64, 67, 0.3);
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 816px;
-    /* A4 width approx */
-    height: 100%;
-}
-
-/* Tiptap Toolbar - Minimalist */
-.editor-toolbar {
-    padding: 8px 16px;
-    border-bottom: 1px solid #f1f3f4;
-    background: #ffffff;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
+.divider-vertical {
+    width: 1px;
+    height: 24px;
+    background-color: #e5e7eb;
+    margin: 0 8px;
 }
 
 .editor-toolbar button {
     background: none;
     border: none;
     padding: 6px;
-    cursor: pointer;
     border-radius: 4px;
-    color: #444746;
-    /* Darker grey */
+    cursor: pointer;
+    color: #4b5563;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s;
 }
 
 .editor-toolbar button:hover {
-    background-color: #f1f3f4;
-    color: #1f1f1f;
+    background-color: #f3f4f6;
+    color: #1f2937;
 }
 
 .editor-toolbar button.is-active {
-    background-color: #e8f0fe;
-    color: #0b57d0;
-    /* Google Blue */
+    background-color: #eff6ff;
+    color: #1976d2;
 }
 
-.divider-vertical {
-    width: 1px;
-    background-color: #e0e0e0;
-    margin: 0 4px;
-    height: 20px;
-    align-self: center;
+.editor-toolbar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-/* Tiptap Content - Paper Padding */
-::ng-deep .ProseMirror {
-    outline: none;
-    padding: 48px 72px;
-    /* More padding like valid doc */
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    min-height: 200px;
-}
-
-/* Bubble Menu */
-.bubble-menu {
+/* Upload State */
+.upload-container {
     display: flex;
-    background-color: #202124;
-    padding: 4px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex-direction: column;
     align-items: center;
-    gap: 2px;
+    justify-content: flex-start;
+    padding-top: 40px;
 }
 
-.bubble-menu button {
-    background: none;
-    border: none;
-    padding: 6px;
-    color: #e8eaed;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.bubble-menu button:hover {
-    background-color: #3c4043;
-}
-
-.bubble-menu button.is-active {
-    background-color: #8ab4f8;
-    color: #202124;
-}
-
-.bubble-menu button .material-icons {
-    font-size: 18px;
-}
-
-.bubble-divider {
-    width: 1px;
-    height: 16px;
-    background-color: #5f6368;
-    margin: 0 4px;
-}
-
-/* Breadcrumb Disabled State */
-.breadcrumb-item.disabled {
-    color: #dadce0 !important;
-    cursor: not-allowed !important;
-    pointer-events: none;
-}
-
-/* Upload Card Styles */
 .upload-card {
-    width: 100%;
-    max-width: 600px;
     background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
     padding: 40px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    max-width: 500px;
+    width: 100%;
+    border: 2px dashed #e5e7eb;
+    transition: border-color 0.2s;
 }
 
-.upload-card .material-icons.upload-icon {
-    font-size: 64px;
-    color: #1a73e8;
-    margin-bottom: 24px;
-    display: block;
+.upload-card:hover {
+    border-color: #1976d2;
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: #9ca3af;
+    margin-bottom: 16px;
 }
 
 .upload-card h3 {
-    margin: 0 0 12px 0;
-    font-size: 24px;
-    color: #202124;
+    margin: 0 0 8px 0;
+    color: #111827;
 }
 
 .upload-card p {
-    color: #5f6368;
-    margin-bottom: 32px;
+    color: #6b7280;
+    margin-bottom: 24px;
     line-height: 1.5;
 }
 
-/* File Meta View */
 .file-meta-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
 }
 
 .file-info {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px;
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
+    gap: 12px;
+    background: #f9fafb;
+    padding: 12px 16px;
     border-radius: 8px;
     width: 100%;
-    box-sizing: border-box;
-    text-align: left;
+    margin-bottom: 8px;
 }
 
-.file-icon {
-    color: #1a73e8;
-    font-size: 32px;
+.file-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .file-details h4 {
-    margin: 0 0 4px 0;
-    font-size: 16px;
-    color: #202124;
+    margin: 0;
+    font-size: 14px;
+    color: #1f2937;
 }
 
 .file-details span {
     font-size: 12px;
-    color: #5f6368;
+    color: #6b7280;
 }
 
 .file-actions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
     justify-content: center;
 }
 
-.btn-large {
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 6px;
+/* ProseMirror / Editor Content Styles */
+/* Basic editor styles */
+:host ::ng-deep .ProseMirror {
+    outline: none;
+    min-height: 29.7cm;
+    /* A4 height */
+    padding: 2cm 2.5cm;
+    /* Standard margins */
+    margin: 2rem auto;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 21cm;
+    /* A4 width */
+    font-size: 11pt;
+    line-height: 1.15;
+    /* Single spacing */
+    font-family: 'Calibri', 'Arial', sans-serif;
+    color: black;
 }
 
-.btn-outline {
-    background: transparent;
-    border: 1px solid #dadce0;
-    color: #3c4043;
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 6px;
+/* Strictly remove margins from ALL block elements to prevent "double spacing" */
+::ng-deep .ProseMirror p,
+::ng-deep .ProseMirror h1,
+::ng-deep .ProseMirror h2,
+::ng-deep .ProseMirror h3,
+::ng-deep .ProseMirror h4,
+::ng-deep .ProseMirror h5,
+::ng-deep .ProseMirror h6,
+::ng-deep .ProseMirror ul,
+::ng-deep .ProseMirror ol,
+::ng-deep .ProseMirror li,
+::ng-deep .ProseMirror blockquote {
+    /* Only reset VERTICAL spacing. Do NOT touch margin-left/right as that controls indentation/alignment. */
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    /* Reset line-height to single spacing */
+    line-height: 1.15 !important;
+}
+
+/* Normalize Fonts: Override inline DOCX font specifications to ensure consistent rendering */
+::ng-deep .ProseMirror span {
+    font-family: inherit !important;
+    /* Optional: Normalize font size if it's jumping around, but usually users want to keep headings etc. */
+    /* font-size: inherit; */
+}
+
+:host ::ng-deep .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* Table support for ProseMirror if needed */
+:host ::ng-deep .ProseMirror table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+:host ::ng-deep .ProseMirror td,
+:host ::ng-deep .ProseMirror th {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+}
+
+/* Page Break Visualization */
+:host ::ng-deep .ProseMirror br[style*="page-break-before"],
+:host ::ng-deep .ProseMirror br[style*="page-break-after"] {
+    display: block;
+    height: 20px;
+    background: repeating-linear-gradient(45deg,
+            #f0f0f0,
+            #f0f0f0 10px,
+            #e0e0e0 10px,
+            #e0e0e0 20px);
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+    margin: 20px -60px;
+    /* Extend to edges */
+    position: relative;
+    content: "Page Break";
+    /* Does not work on br, but good for intent */
+}
+
+:host ::ng-deep .ProseMirror br[style*="page-break-before"]::after {
+    content: "Page Break";
+    display: block;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    line-height: 20px;
+}
+
+/* Simulate Page Break as a Gap between sheets */
+/* We use the break element to push content down and create a 'hole' in the white background */
+/* Note: Since we can't easily split the ProseMirror div into multiple divs, we visual hack it:
+   We make the break element a wide block with the 'desk' background color, effectively hiding the white paper
+   and creating a gap. */
+
+::ng-deep br[style*="page-break"],
+::ng-deep div[style*="page-break"],
+::ng-deep .page-break {
+    display: block;
+    height: 30px;
+    /* Gap size */
+    background-color: #f0f2f5;
+    /* Match desk background */
+    margin: 0 -2.5cm;
+    /* Negative margin to extend to edges of the 'sheet' (counteracting padding) */
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+    content: " ";
+    /* Ensure it renders */
+    width: calc(100% + 5cm);
+    /* Full width including padding */
+}
+
+/* Optional: Add a "Page 2" label or dashed line inside the gap? 
+   No, just a clean gap is clearer for "separate pages". */
+
+
+/* Breadcrumb nav overrides */
+.breadcrumb-item {
     cursor: pointer;
     font-weight: 500;
 }
 
-.btn-outline:hover {
-    background-color: #f8f9fa;
-    border-color: #dadce0;
+.breadcrumb-item:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    cursor: default;
+    color: #111827;
+    text-decoration: none;
+}
+
+.breadcrumb-item.disabled {
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.breadcrumb-separator {
+    margin: 0 8px;
+    color: #9ca3af;
 }

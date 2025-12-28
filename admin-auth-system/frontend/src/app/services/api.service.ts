@@ -23,4 +23,17 @@ export class ApiService {
             withCredentials: true
         });
     }
+
+    convertDocument(html: string): Observable<Blob> {
+        return this.http.post(this.API_URL + 'documents/convert', { html }, {
+            responseType: 'blob',
+            withCredentials: true
+        });
+    }
+
+    createWorkflow(formData: FormData): Observable<ApiResponse<any>> {
+        return this.http.post<ApiResponse<any>>(this.API_URL + 'workflows/', formData, {
+            withCredentials: true
+        });
+    }
 }
