@@ -23,6 +23,7 @@
         <module>gateway-service</module>
         <module>notification-service</module>
         <module>storage-service</module>
+        <module>document-service</module>
     </modules>
 
     <properties>
