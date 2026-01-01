@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import com.example.common.dto.WorkflowStatus;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity

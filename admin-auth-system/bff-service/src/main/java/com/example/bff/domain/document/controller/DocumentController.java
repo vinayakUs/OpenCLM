@@ -1,6 +1,5 @@
 package com.example.bff.domain.document.controller;
 
-import com.example.bff.domain.document.service.DocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,16 +11,16 @@ import java.util.Map;
 @RequestMapping("/api/documents")
 public class DocumentController {
 
-    private final DocumentService documentService;
+    private final com.example.bff.domain.document.client.DocumentClient documentClient;
 
-    public DocumentController(DocumentService documentService) {
-        this.documentService = documentService;
+    public DocumentController(com.example.bff.domain.document.client.DocumentClient documentClient) {
+        this.documentClient = documentClient;
     }
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadDocument(@RequestParam("file") MultipartFile file) {
         try {
-            String htmlContent = documentService.parseDocxToHtml(file);
+            String htmlContent = documentClient.parseDocxToHtml(file);
             return ResponseEntity.ok(Collections.singletonMap("html", htmlContent));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -36,7 +35,7 @@ public class DocumentController {
             if (html == null) {
                 return ResponseEntity.badRequest().build();
             }
-            byte[] docxBytes = documentService.convertHtmlToDocx(html);
+            byte[] docxBytes = documentClient.convertHtmlToDocx(html);
 
             return ResponseEntity.ok()
                     .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,

@@ -29,6 +29,11 @@ spring:
           predicates:
             - Path=/workflow/**
 
+        - id: document-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/document/**
+
       globalcors:
         cors-configurations:
           '[/**]':

@@ -31,6 +31,12 @@ export class ApiService {
         });
     }
 
+    uploadDocument(formData: FormData): Observable<any> {
+        return this.http.post<any>(this.API_URL + 'documents/upload', formData, {
+            withCredentials: true
+        });
+    }
+
     createWorkflow(formData: FormData): Observable<ApiResponse<any>> {
         return this.http.post<ApiResponse<any>>(this.API_URL + 'workflows/', formData, {
             withCredentials: true

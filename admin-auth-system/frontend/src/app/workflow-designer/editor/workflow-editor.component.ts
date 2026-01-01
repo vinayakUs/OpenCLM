@@ -203,11 +203,11 @@ export class WorkflowEditorComponent implements OnInit, OnDestroy {
         const formData = new FormData();
         formData.append('file', file);
 
-        this.http.post<any>('/api/documents/upload', formData).subscribe({
+        this.apiService.uploadDocument(formData).subscribe({
             next: (response: any) => {
                 if (response.html) {
                     console.log('Received HTML length:', response.html.length);
-                    console.log('First 500 chars:', response.html.substring(0, 500));
+                    // console.log('First 500 chars:', response.html.substring(0, 500));
                     this.editor.commands.setContent(response.html);
                 }
             },
