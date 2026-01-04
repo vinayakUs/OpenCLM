@@ -75,11 +75,13 @@ services:
       - "0"
       - --check=false
       - --kafka-addr
-      - PLAINTEXT://0.0.0.0:9092
+      - PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:29092
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda:9092
+      - PLAINTEXT://localhost:9092,DOCKER://redpanda:29092
     ports:
       - "9092:9092"
+      - "29092:29092"
+
     volumes:
       - redpanda-data:/var/lib/redpanda/data
     networks:
@@ -93,7 +95,7 @@ services:
     ports:
       - "8096:8080"
     environment:
-      KAFKA_BROKERS: redpanda:9092
+      KAFKA_BROKERS: redpanda:29092
     networks:
       - backend
 

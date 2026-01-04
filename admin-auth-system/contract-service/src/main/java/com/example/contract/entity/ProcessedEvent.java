@@ -1,0 +1,27 @@
+package com.example.contract.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+
+@Entity
+@Table(name = "processed_event")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class ProcessedEvent {
+
+    @Id
+    @NonNull
+    @EqualsAndHashCode.Include
+    @Column(name = "event_id")
+    private UUID eventId;
+
+    @Column(name = "processed_at")
+    private OffsetDateTime processedAt;
+
+}
