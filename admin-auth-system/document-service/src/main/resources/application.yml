@@ -6,7 +6,7 @@ spring:
 
 
   datasource:
-    url: sd
+    url: jdbc:postgresql://localhost:5432/document_service?options=-c%20timezone=Asia/Kolkata
     username: admin
     password: password
     driver-class-name: org.postgresql.Driver
@@ -21,6 +21,7 @@ spring:
 
   sql:
     init:
+      mode: always
 
 
 server:

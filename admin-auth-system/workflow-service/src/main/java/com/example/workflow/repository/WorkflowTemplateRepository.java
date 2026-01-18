@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface WorkflowTemplateRepository extends JpaRepository<WorkflowTemplate, UUID> {
 
     Page<WorkflowTemplate> findAll(Pageable pageable);
+
+    Page<WorkflowTemplate> findAllByNameContainingIgnoreCase(String search, Pageable pageable);
+
 }

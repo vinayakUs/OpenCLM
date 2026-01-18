@@ -34,29 +34,28 @@ public class WorkflowService implements IWorkflowService {
         FileUploadResponse fileUploadResponse = fileUploadService.uploadDocument(multipartFile);
         log.info(fileUploadResponse.getFileId().toString());
 
-        WorkflowResponse workflowResponse = createWorkflowEntity(fileUploadResponse.getFileId(), workflowCreateRequest);
-        log.info(workflowResponse.toString());
+        UUID workflowUUID = createWorkflowEntity(fileUploadResponse.getFileId(), workflowCreateRequest);
+        log.info(workflowUUID.toString());
 
-        return fileUploadResponse.getFileId();
+        return workflowUUID;
 
     }
 
-    private WorkflowResponse createWorkflowEntity(UUID template_UUID,
+    private UUID createWorkflowEntity(UUID template_UUID,
             WorkflowCreateRequest workflowCreateRequest) {
         WorkflowClientRequest req = new WorkflowClientRequest();
 
         req.setName(workflowCreateRequest.getName());
         req.setDescription(workflowCreateRequest.getDescription());
         req.setTemplateFileId(template_UUID);
-        req.setCurrentStatus(WorkflowStatus.DRAFT);
+        req.setCurrentStatus(workflowCreateRequest.getCurrentStatus());
         req.setVariables(workflowCreateRequest.getVariables());
-        System.out.println("logging before sending workflow : " + req.toString());
         return workflowClient.postWorkflow(req);
 
     }
 
-    public PageResponse<WorkflowResponse> getAllWorkflows(int page, int size) {
-        return workflowClient.getAllWorkflow(page, size);
+    public Mono<PageResponse<WorkflowResponse>> getAllWorkflows(String search , int page, int size) {
+        return workflowClient.getAllWorkflowv2(search , page, size);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.contract.entity;
 
-import com.example.contract.comman.ContractStatus;
+import com.example.common.dto.contract.ContractStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

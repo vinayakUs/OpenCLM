@@ -74,7 +74,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public UUID postWorkflowTemplate(WorkflowCreateRequest dto, UUID created_by) {
+    public UUID postWorkflowTemplate(WorkflowCreateRequest dto) {
         WorkflowTemplate workflowTemplate = new WorkflowTemplate(
                 dto.getName(),
                 dto.getDescription(),
@@ -101,9 +101,17 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public PageResponse<WorkflowResponse> getAllWorkflow(int page, int size) {
+    public PageResponse<WorkflowResponse> getAllWorkflow(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<WorkflowTemplate> response = workflowTemplateRepository.findAll(pageable);
+
+        Page<WorkflowTemplate> response ;
+        if (search != null && !search.isBlank()) {
+            response = workflowTemplateRepository
+                    .findAllByNameContainingIgnoreCase(search, pageable);
+        } else {
+            response = workflowTemplateRepository.findAll(pageable);
+        }
+
         Page<WorkflowResponse> mappedPage = response.map(this::mapToResponse);
 
         PageResponse<WorkflowResponse> pageResponse = new PageResponse<>();

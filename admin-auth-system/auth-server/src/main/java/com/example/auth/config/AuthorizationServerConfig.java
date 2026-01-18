@@ -104,7 +104,7 @@ public class AuthorizationServerConfig {
                     })
                     .postLogoutRedirectUris(uris -> {
                         uris.clear();
-                        uris.add("http://localhost:4200/login?logout");
+                        uris.add("http://localhost:4200/");
                     })
                     .build();
         } else {
@@ -115,7 +115,7 @@ public class AuthorizationServerConfig {
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                     .redirectUri(bffRedirectUri)
-                    .postLogoutRedirectUri("http://localhost:4200/login?logout")
+                    .postLogoutRedirectUri("http://localhost:4200/")
                     .scope(OidcScopes.OPENID)
                     .scope(OidcScopes.PROFILE)
                     .scope(OidcScopes.EMAIL)
@@ -156,32 +156,30 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(){
-        return  context -> {
-            if( !(context.getPrincipal() instanceof UsernamePasswordAuthenticationToken auth)){
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+            if (!(context.getPrincipal() instanceof UsernamePasswordAuthenticationToken auth)) {
                 return;
             }
             Object principal = auth.getPrincipal();
-            if(!(principal instanceof UserDetailsImpl user)){
+            if (!(principal instanceof UserDetailsImpl user)) {
                 return;
             }
-            //ACCESS_TOKEN - authorization info for APIs no need for name email etc
-            if(OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())){
+            // ACCESS_TOKEN - authorization info for APIs no need for name email etc
+            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
                 context.getClaims().subject(user.getId().toString());
                 context.getClaims().claim("user_id", user.getId());
-                context.getClaims().claim("roles" ,
-                        auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
-                        );
+                context.getClaims().claim("roles",
+                        auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
 
             }
 
-            //ID TOKEN -- frontend display
-            if(OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())){
+            // ID TOKEN -- frontend display
+            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
                 context.getClaims().subject(user.getId().toString());
                 context.getClaims().claim("name", user.getName());
                 context.getClaims().claim("email", user.getEmail());
             }
-
 
         };
     }
@@ -191,4 +189,3 @@ public class AuthorizationServerConfig {
         return AuthorizationServerSettings.builder().issuer("http://localhost:9000").build();
     }
 }
-

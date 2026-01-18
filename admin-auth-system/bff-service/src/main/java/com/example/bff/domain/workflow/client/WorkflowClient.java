@@ -8,12 +8,16 @@ import com.example.common.dto.ApiResponse;
 import com.example.bff.exception.WorkflowCreationException;
 import com.example.bff.exception.WorkflowRetrivalException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @Component
 public class WorkflowClient {
@@ -25,19 +29,22 @@ public class WorkflowClient {
         this.webClient = builder.baseUrl(workflowUrl).build();
     }
 
-    public WorkflowResponse postWorkflow(WorkflowClientRequest workflowClientRequest) {
+    public UUID postWorkflow(WorkflowClientRequest workflowClientRequest) {
 
         try {
 
             return webClient.post()
-                    .uri("workflow/")
+                    .uri("/workflow")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(workflowClientRequest)
+
                     .retrieve()
                     .onStatus(httpStatusCode -> httpStatusCode.isError(),
                             clientResponse -> clientResponse.bodyToMono(String.class)
                                     .map(body -> new WorkflowCreationException("Workflow Failed : " + body, null)))
-                    .bodyToMono(WorkflowResponse.class)
+                    .bodyToMono(new ParameterizedTypeReference<ApiResponse<UUID>>() {
+                    })
+                    .map(x->x.data)
                     .block();
 
         } catch (WebClientResponseException ex) {
@@ -72,6 +79,32 @@ public class WorkflowClient {
         }
 
     }
+
+    public Mono<PageResponse<WorkflowResponse>> getAllWorkflowv2(String search, int page, int size) {
+
+        return webClient.get().uri(
+                uriBuilder -> {
+                    uriBuilder.path("/workflow");
+                    if (search != null && !search.isEmpty()) {
+                        uriBuilder.queryParam("search", search);
+                    }
+                    uriBuilder.queryParam("page", page);
+                    uriBuilder.queryParam("size", size);
+                    return uriBuilder.build();
+                })
+                .retrieve()
+                .onStatus(
+                        HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .defaultIfEmpty("Client error")
+                                .flatMap(x -> Mono.error(
+                                        new WorkflowRetrivalException("Workflow Retrieval Failed : " + x, null))))
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<PageResponse<WorkflowResponse>>>() {
+                })
+                .map(ApiResponse::getData)
+                .onErrorMap(WebClientResponseException.class,
+                        ex -> new WorkflowRetrivalException("Workflow service unreachable : " + ex.getStatusCode(),
+                                ex));
+
+    }
 }
-
-

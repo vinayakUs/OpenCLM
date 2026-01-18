@@ -1,4 +1,10 @@
 package com.example.common.dto.contract;
 
-public class asd {
+public enum ContractStatus {
+    DRAFT,
+    IN_REVIEW,
+    NEGOTIATION,
+    APPROVED,
+    REJECTED,
+    CANCELLED
 }

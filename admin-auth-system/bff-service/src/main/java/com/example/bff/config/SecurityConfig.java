@@ -21,7 +21,7 @@ public class SecurityConfig {
                         CustomOidcUserService customOidcUserService) throws Exception {
                 OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
                                 clientRegistrationRepository);
-                logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:4200/login?logout");
+                logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:4200/");
 
                 http
                                 .csrf(csrf -> csrf.disable())

@@ -38,9 +38,11 @@ spring:
 
 app:
   apis:
+    gateway: 'http://localhost:8080'
     workflow: 'http://localhost:8084'
     storage: 'http://localhost:8083'
     document: 'http://localhost:8086'
+    contract: 'http://localhost:8088'
 logging:
   level:
     org.springframework.security: DEBUG

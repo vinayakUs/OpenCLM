@@ -1,7 +1,8 @@
 package com.example.contract.service;
 
+import com.example.common.dto.contract.ContractStatus;
+import com.example.contract.ContractResponse;
 import com.example.contract.CreateContractRequest;
-import com.example.contract.comman.ContractEvent;
 import com.example.contract.entity.Contract;
 import com.example.contract.entity.OutboxEvent;
 import com.example.contract.repository.ContractRepository;
@@ -14,8 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +60,33 @@ public class ContractService {
             outboxRepository.save(event);
 
             return contract.getId();
+
+    }
+
+    public List<ContractResponse> getContracts(String query) {
+        List<Contract> contracts;
+        if(query != null && !query.isBlank()){
+
+            contracts  = contractRepository.findByNameContainingIgnoreCase(query);
+
+        }else {
+            contracts = contractRepository.findAll();
+
+        }
+
+
+       return contracts.stream().map(x->
+             new ContractResponse(
+                     x.getId(),
+                     x.getName(),
+                     x.getWorkflowId(),
+                     x.getStatus(),
+                     x.getCreatedBy(),
+                     x.getCreatedAt()
+
+             )
+        ).toList();
+
 
     }
 }

@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS workflow_template (
     -- Reference to file_storage table
     template_file_id UUID NOT NULL,
     -- DRAFT (still designing), LIVE (active workflow)
-    current_status VARCHAR(50) NOT NULL DEFAULT 'DRAFT',
+    current_status VARCHAR(50) NOT NULL DEFAULT 'DRAFT'
+                                             check ( current_status IN ('DRAFT' , 'PUBLISHED') )
+    ,
     version INT NOT NULL DEFAULT 1,
     -- auditing columns (populated by JPA Auditing)
     created_by UUID NOT NULL,

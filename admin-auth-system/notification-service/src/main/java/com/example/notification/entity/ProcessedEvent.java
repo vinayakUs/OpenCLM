@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "processed_event")
@@ -17,7 +18,7 @@ public class ProcessedEvent {
     @NonNull
     @EqualsAndHashCode.Include
     @Column(name = "event_id")
-    private String eventId;
+    private UUID eventId;
 
     @Column(name = "processed_at")
     private OffsetDateTime processedAt;

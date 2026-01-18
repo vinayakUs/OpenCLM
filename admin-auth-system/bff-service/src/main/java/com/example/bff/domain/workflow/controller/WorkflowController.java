@@ -32,23 +32,30 @@ public class WorkflowController {
     // }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<?>> postWorkflow(
+    public ResponseEntity<ApiResponse<UUID>> postWorkflow(
             @org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient("bff-client") org.springframework.security.oauth2.client.OAuth2AuthorizedClient authorizedClient,
             @RequestPart("file") MultipartFile file,
             @Validated @RequestPart("data") WorkflowCreateRequest workflowCreateRequest
 
     ) {
-        log.info("Received request to save workflow: {}", workflowCreateRequest.getName());
+        log.info("Received request to save workflow: {}", workflowCreateRequest.toString());
         return ResponseEntity.ok()
                 .body(ApiResponse.success(workflowService.saveWorkflowState(file, workflowCreateRequest)));
     }
 
-    @GetMapping(value = "/")
-    public ResponseEntity<ApiResponse<PageResponse<WorkflowResponse>>> getAllWorkflows(
+    @GetMapping()
+    public Mono<ResponseEntity<ApiResponse<PageResponse<WorkflowResponse>>>> getAllWorkflows(
+            @RequestParam(required = false) String search,
             @RequestParam int page,
             @RequestParam int size) {
 
-        return ResponseEntity.ok(ApiResponse.success(workflowService.getAllWorkflows(page, size)));
+        return workflowService.getAllWorkflows(search,page, size).
+                map(x->
+                        ResponseEntity.ok().body(
+                                ApiResponse.success(x)
+                        )
+                        );
+
     }
 
 }

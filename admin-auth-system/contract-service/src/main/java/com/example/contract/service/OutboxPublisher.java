@@ -1,6 +1,6 @@
 package com.example.contract.service;
 
-import com.example.contract.comman.ContractEvent;
+import com.example.common.dto.contract.ContractEvent;
 import com.example.contract.entity.OutboxEvent;
 import com.example.contract.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -25,7 +24,7 @@ public class OutboxPublisher {
 
 
     private final OutboxRepository outboxRepository;
-    private final KafkaTemplate<String,ContractEvent> kafkaTemplate;
+    private final KafkaTemplate<String, ContractEvent> kafkaTemplate;
 
     @Scheduled(fixedDelay = 5000)
     public void publish(){

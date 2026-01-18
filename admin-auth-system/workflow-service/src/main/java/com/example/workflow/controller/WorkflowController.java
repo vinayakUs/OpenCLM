@@ -28,10 +28,12 @@ public class WorkflowController {
         return ApiResponse.success(res);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public ApiResponse<PageResponse<WorkflowResponse>> getAllWorkflow(
-            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(workflowService.getAllWorkflow(page, size));
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.success(workflowService.getAllWorkflow(search,page, size));
     }
 
     @PutMapping("/{id}")
@@ -41,12 +43,9 @@ public class WorkflowController {
         return ApiResponse.success(uuid);
     }
 
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<UUID> postWorkflowTemplate(@RequestBody WorkflowCreateRequest dto,
-            @AuthenticationPrincipal Jwt jwt) {
-        System.out.println(dto.toString());
-        System.out.println(jwt.getSubject());
-        UUID uuid = workflowService.postWorkflowTemplate(dto, UUID.fromString(jwt.getSubject()));
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<UUID> postWorkflowTemplate(@RequestBody WorkflowCreateRequest dto) {
+        UUID uuid = workflowService.postWorkflowTemplate(dto);
         System.out.println("success : " + uuid);
         return ApiResponse.success(uuid);
 

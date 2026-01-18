@@ -23,20 +23,17 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-
     @PostMapping("/convert/docxToHtml")
-    public ResponseEntity<Map<String,String>> docxToHtml (@RequestParam("file") MultipartFile file)
-    {
-        try{
+    public ResponseEntity<Map<String, String>> docxToHtml(@RequestParam("file") MultipartFile file) {
+        try {
             String htmlContent = documentService.parseDocxToHtml(file);
             return ResponseEntity.ok(Collections.singletonMap("html", htmlContent));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(Collections.singletonMap("error",
                             "Failed to parse document: " + e.getMessage()));
         }
-
 
     }
 
@@ -59,7 +56,6 @@ public class DocumentController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
 
     @PostMapping(value = "/convert/generateFromTemplate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> generate(
@@ -165,12 +161,10 @@ public class DocumentController {
 
         } catch (
 
-                Exception e) {
+        Exception e) {
             return ResponseEntity.internalServerError()
                     .body(e.getMessage().getBytes());
         }
     }
-
-
 
 }
