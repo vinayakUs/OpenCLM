@@ -18,8 +18,9 @@ export class AppComponent {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      // Hide navbar on login, signup, and workflow editor pages
-      this.showNavbar = !['/login', '/signup', '/', '/workflow-designer/editor'].includes(event.urlAfterRedirects);
+      const url = event.urlAfterRedirects.split('?')[0];
+      const excludedRoutes = ['/signup', '/', '/workflow-designer/editor'];
+      this.showNavbar = !excludedRoutes.includes(url);
     });
   }
 }

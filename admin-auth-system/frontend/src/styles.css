@@ -1,18 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Global Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom Pulse Animation if Tailwind's is not sufficient */
+@keyframes pulse-custom {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
+
+
+.animate-pulse-custom {
+  animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+
 
 :root {
-  --primary: #1a73e8;
-  /* Blue 600 */
-  --primary-hover: #1557b0;
+  --primary: rgb(21, 77, 67);
+  /* User requested Deep Green */
+  --primary-hover: rgba(21, 77, 67, 0.9);
+  --primary-light: rgba(21, 77, 67, 0.1);
+  /* Pill bg */
+
   --bg-dark: #ffffff;
-  /* White */
   --bg-card: #f8f9fa;
-  /* Gray 50 */
-  --text-main: #202124;
-  /* Gray 900 */
-  --text-muted: #5f6368;
-  /* Gray 600 */
+  --text-main: #263238;
+  --text-muted: #546e7a;
+  --border-color: #cfd8dc;
+
   --error: #d93025;
 }
 
@@ -95,16 +162,50 @@ input:focus {
 }
 
 button.btn-primary {
-  width: 100%;
-  padding: 0.85rem;
+  padding: 0 20px;
+  height: 38px;
   border: none;
   border-radius: 6px;
-  background: linear-gradient(to right, var(--primary), var(--primary-hover));
+  background: var(--primary);
   color: white;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.1s, opacity 0.2s;
-  font-size: 1rem;
+  transition: all 0.2s;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(21, 77, 67, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button.btn-primary:hover {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(21, 77, 67, 0.4);
+}
+
+.btn-outlined {
+  padding: 0 16px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 6px;
+  color: var(--text-main);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-outlined:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 button.btn-primary:active {

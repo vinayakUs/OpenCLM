@@ -1,654 +1,972 @@
 /* Layout Structure */
+/* MODAL FIX: Ensure modal is above everything */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-card {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-card h3 {
+    margin: 0 0 12px 0;
+    color: var(--primary-color);
+}
+
+.modal-card label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.modal-card input,
+.modal-card select {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    outline: none;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
 :host {
     display: block;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    --primary-color: rgb(21, 77, 67);
+    /* User requested specific green */
+    --hover-bg: rgba(21, 77, 67, 0.05);
+    --border-color: #cfd8dc;
+    --text-primary: #263238;
+    --text-secondary: #546e7a;
+    --bg-light: #f4f7f6;
+    --pill-bg: rgba(21, 77, 67, 0.1);
 }
 
+/* Layout */
 .editor-layout {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    background-color: #f8f9fa;
-}
-
-/* Navbar */
-.editor-navbar {
-    height: 60px;
+    height: 100vh;
     background-color: white;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    z-index: 10;
 }
 
-.nav-left {
+/* --- Row 1: Top Global Header --- */
+.top-global-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: white;
+    z-index: 20;
+}
+
+.header-left {
     display: flex;
     align-items: center;
     gap: 16px;
-    flex: 1;
 }
 
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.workflow-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.title-input {
-    font-size: 18px;
-    font-weight: 500;
-    border: none;
-    outline: none;
-    color: #1f2937;
-    background: transparent;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.title-input:hover,
-.title-input:focus {
-    background-color: #f3f4f6;
-}
-
-.status-draft {
-    font-size: 12px;
-    padding: 2px 8px;
-    background-color: #f3f4f6;
-    color: #6b7280;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.icon-btn {
+.icon-btn-simple {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b7280;
+    padding: 8px;
+    border-radius: 4px;
     transition: background 0.2s;
 }
 
-.icon-btn:hover {
-    background-color: #f3f4f6;
-    color: #1f2937;
+.icon-btn-simple:hover {
+    background-color: var(--pill-bg);
+    color: var(--primary-color);
 }
 
-/* Buttons */
-.btn-primary,
-.btn-secondary,
-.btn-outline {
-    height: 36px;
-    padding: 0 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-}
-
-.btn-primary {
-    background-color: #1976d2;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #1565c0;
-}
-
-.btn-secondary {
-    background-color: white;
-    border: 1px solid #d1d5db;
-    color: #374151;
-}
-
-.btn-secondary:hover {
-    background-color: #f9fafb;
-    border-color: #9ca3af;
-}
-
-.btn-text,
-.btn-text-danger {
+.icon-btn-small {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 13px;
-    padding: 4px 8px;
-}
-
-.btn-text:hover {
-    text-decoration: underline;
-    color: #1976d2;
-}
-
-.btn-text-danger {
-    color: #dc2626;
-}
-
-.btn-text-danger:hover {
-    background-color: #fee2e2;
-    border-radius: 4px;
-}
-
-/* Main Container */
-.editor-container {
+    color: #bdbdbd;
+    padding: 4px;
     display: flex;
-    flex: 1;
-    overflow: hidden;
 }
 
-/* Left Column */
-.col-left {
-    width: 320px;
-    background-color: white;
-    border-right: 1px solid #e0e0e0;
+.workflow-info {
     display: flex;
-    flex-direction: column;
-    z-index: 5;
-}
-
-.section-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
-.section-header h2 {
+.workflow-name-input {
+    border: none;
     font-size: 14px;
     font-weight: 600;
-    text-transform: uppercase;
-    color: #6b7280;
-    margin: 0;
-    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    padding: 4px 0;
+    outline: none;
+    background: transparent;
+    min-width: 120px;
 }
 
-.btn-icon-add {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #1976d2;
-    display: flex;
-    align-items: center;
-    padding: 4px;
-    border-radius: 4px;
+.workflow-name-input:hover {
+    text-decoration: underline;
 }
 
-.btn-icon-add:hover {
-    background-color: #eff6ff;
+.separator {
+    color: #bdbdbd;
+    margin: 0 4px;
 }
 
-/* Right Column */
-.col-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background-color: #f8f9fa;
-    position: relative;
-}
-
-.scroll-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 40px;
-}
-
-/* Variable Cards */
-.variables-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px;
-}
-
-.variable-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    transition: all 0.2s;
-    overflow: hidden;
-}
-
-.variable-card:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-}
-
-.variable-card.expanded {
-    border-color: #1976d2;
-    box-shadow: 0 4px 6px rgba(25, 118, 210, 0.1);
-}
-
-.card-header {
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    background-color: #fff;
-}
-
-.card-header:hover {
-    background-color: #f9fafb;
-}
-
-.header-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.var-label {
-    font-weight: 500;
-    color: #1f2937;
+.template-name {
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
-.type-badge {
+.status-badge {
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 12px;
     font-size: 11px;
-    background-color: #f3f4f6;
-    color: #6b7280;
-    padding: 2px 6px;
-    border-radius: 4px;
-    align-self: flex-start;
+    font-weight: 600;
 }
 
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #2e7d32;
+    border-radius: 50%;
+}
+
+.status-badge.draft {
+    background-color: #eceff1;
+    color: #546e7a;
+}
+
+.status-badge.draft .status-dot {
+    background-color: #78909c;
+}
+
+/* Header Actions (Right) */
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
-.btn-icon-small {
-    background: none;
-    border: none;
-    padding: 4px;
+.unsaved-changes {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-right: 12px;
+}
+
+/* Buttons */
+.btn-outlined {
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
     cursor: pointer;
-    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-outlined:hover {
+    background-color: var(--bg-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outlined:disabled,
+.btn-outlined[disabled] {
+    opacity: 0.5;
+    cursor: default;
+    background-color: #f5f5f5;
+    border-color: #e0e0e0;
+    color: #bdbdbd;
+    pointer-events: none;
+}
+
+.btn-primary {
+    height: 38px;
+    padding: 0 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(21, 77, 67, 0.3);
+    /* Updated to match new theme */
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.9);
+    box-shadow: 0 4px 8px rgba(21, 77, 67, 0.4);
+    /* Updated to match new theme */
+    transform: translateY(-1px);
+}
+
+/* Button Variants */
+.btn-primary-small {
+    height: 32px;
+    padding: 0 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(21, 77, 67, 0.2);
+    transition: all 0.2s;
+}
+
+.btn-primary-small:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(21, 77, 67, 0.3);
+}
+
+.btn-secondary {
+    height: 32px;
+    padding: 0 16px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--pill-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-danger {
+    height: 32px;
+    padding: 0 16px;
+    background-color: white;
+    border: 1px solid #ffcdd2;
+    color: #d32f2f;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: auto;
+    transition: all 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #ffebee;
+    border-color: #d32f2f;
+}
+
+.process-nav-header {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: #fcfcfc;
+}
+
+.sidebar-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border-color);
+    background: white;
     border-radius: 4px;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
 }
 
-.btn-icon-small:hover {
-    background-color: #e5e7eb;
-    color: #1f2937;
-}
-
-.card-body {
-    padding: 16px;
-    border-top: 1px solid #f3f4f6;
-    background-color: #fafafa;
-}
-
-.view-row {
+.process-nav {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
-.view-label {
-    color: #6b7280;
+.nav-step.disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
 }
 
-.view-value {
-    color: #111827;
+.nav-step.active {
+    color: var(--text-primary);
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.step-icon {
+    font-size: 16px;
+}
+
+.separator-chevron {
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+/* 4. Secondary Header (Document Tabs) */
+.doc-tabs-header {
+    height: 44px;
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    /* Center vertically specifically for the right actions */
+    justify-content: space-between;
+    padding: 0 16px;
+}
+
+.tabs-left {
+    display: flex;
+    height: 100%;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.doc-tab {
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.doc-tab:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-light);
+}
+
+.doc-tab.active {
+    color: var(--text-primary);
+    font-weight: 600;
+    border-bottom: 3px solid var(--primary-color);
+    /* Green underline */
+}
+
+.tabs-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.generate-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.generate-control .label {
+    font-size: 12px;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
-.form-group {
-    margin-bottom: 12px;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    outline: none;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #1976d2;
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
-}
-
-.card-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #e5e7eb;
-}
-
-/* Editor Toolbar & Canvas */
-.canvas-view {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 40px;
-}
-
-.editor-wrapper {
-    width: 100%;
-    max-width: 850px;
-    /* A4 width */
-    background: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 1000px;
-}
-
-.editor-toolbar {
-    padding: 8px 16px;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #fff;
+.dropdown-trigger {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
     display: flex;
     align-items: center;
     gap: 8px;
-    position: sticky;
-    top: 0;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+}
+
+.dropdown-trigger .material-icons {
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.text-sm {
+    font-size: 16px;
+}
+
+/* 5. Main Workspace (Sidebar + Canvas) */
+.workspace-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    /* Light grey background for canvas area */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    background-color: white;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
     z-index: 10;
-    flex-wrap: wrap;
+    position: relative;
+    /* For overlay positioning */
+}
+
+.sidebar-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Edit Overlay */
+.edit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.98);
+    z-index: 50;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    border-right: 1px solid var(--primary-color);
+    /* Subtle highlight */
+}
+
+.edit-overlay h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-overlay label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: -8px;
+    /* Tighten up */
+}
+
+.edit-overlay input,
+.edit-overlay select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.edit-overlay input:focus,
+.edit-overlay select:focus {
+    border-color: var(--primary-color);
+}
+
+/* Accordion */
+.accordion-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.accordion-header {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.accordion-header:hover {
+    background-color: var(--bg-light);
+}
+
+.accordion-body {
+    padding: 8px 16px 16px 16px;
+}
+
+/* Interaction Pill Styles */
+.variable-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    background-color: white;
+    /* Clean look */
+    border-radius: 4px;
+    cursor: grab;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.variable-pill:hover {
+    background-color: var(--hover-bg);
+}
+
+.pill-icon-box {
+    width: 24px;
+    height: 24px;
+    background-color: var(--pill-bg);
+    /* Teal light */
+    color: var(--primary-color);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.pill-label {
+    flex: 1;
+}
+
+/* Editor Area */
+.editor-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-scroller {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Toolbar Override */
+/* Toolbar Override */
+.editor-toolbar {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    /* Centered toolbar like mockup */
+}
+
+.mode-toggle {
+    display: flex;
+    background: #f1f3f4;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.toggle-option {
+    border: none;
+    background: none;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.toggle-option.active {
+    background: var(--pill-bg);
+    /* Theme Highlight */
+    color: var(--primary-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+}
+
+.dropdown-trigger-simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.dropdown-trigger-simple:hover {
+    background-color: var(--pill-bg);
+    border-radius: 4px;
+    color: var(--primary-color);
+}
+
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.zoom-text {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 0 6px;
+    min-width: 40px;
+    text-align: center;
 }
 
 .button-group {
     display: flex;
+    align-items: center;
     gap: 2px;
 }
 
-.divider-vertical {
-    width: 1px;
-    height: 24px;
-    background-color: #e5e7eb;
-    margin: 0 8px;
-}
-
-.editor-toolbar button {
+.button-group button {
     background: none;
     border: none;
-    padding: 6px;
-    border-radius: 4px;
     cursor: pointer;
-    color: #4b5563;
+    padding: 4px;
+    border-radius: 3px;
+    color: #5f6368;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.editor-toolbar button:hover {
-    background-color: #f3f4f6;
-    color: #1f2937;
+.button-group button:hover {
+    background-color: var(--pill-bg);
+    color: var(--primary-color);
 }
 
-.editor-toolbar button.is-active {
-    background-color: #eff6ff;
-    color: #1976d2;
+.button-group button.is-active {
+    background-color: var(--pill-bg);
+    color: var(--primary-color);
+    font-weight: bold;
 }
 
-.editor-toolbar button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.button-group .material-icons {
+    font-size: 18px;
 }
 
-/* Upload State */
-.upload-container {
+/* ProseMirror Sheet */
+:host ::ng-deep .ProseMirror {
+    outline: none;
+    min-height: 29.7cm;
+    padding: 2.5cm 2.5cm;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Softer shadow */
+    width: 21cm;
+    font-family: 'Calibri', sans-serif;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+/* Variable / Code Highlight */
+:host ::ng-deep .ProseMirror code {
+    background-color: #e0f2f1;
+    /* Light Teal */
+    color: #00695c;
+    /* Dark Teal Text */
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Roboto Mono', monospace;
+    /* Distinct font */
+    font-size: 0.9em;
+    font-weight: 500;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* Restore List Styles inside Editor */
+:host ::ng-deep .ProseMirror ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+:host ::ng-deep .ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+:host ::ng-deep .ProseMirror li {
+    margin-bottom: 0.25em;
+}
+
+:host ::ng-deep .ProseMirror ul ul {
+    list-style-type: circle;
+    margin-top: 0.25em;
+}
+
+:host ::ng-deep .ProseMirror ol ol {
+    list-style-type: lower-alpha;
+    margin-top: 0.25em;
+}
+
+/* Document View (Home) */
+.document-view {
+    padding: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 40px;
+    gap: 32px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--bg-light);
 }
 
+.meta-card {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid var(--border-color);
+}
+
+.meta-card h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.meta-card textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.meta-card textarea:focus {
+    border-color: var(--primary-color);
+}
+
+.upload-container-home {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Reusing .upload-card styles from previous context but refining */
 .upload-card {
     background: white;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 500px;
     width: 100%;
-    border: 2px dashed #e5e7eb;
+    border: 2px dashed #e0e0e0;
     transition: border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .upload-card:hover {
-    border-color: #1976d2;
+    border-color: var(--primary-color);
 }
 
 .upload-icon {
     font-size: 48px;
-    color: #9ca3af;
+    color: #bdbdbd;
     margin-bottom: 16px;
 }
 
 .upload-card h3 {
     margin: 0 0 8px 0;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .upload-card p {
-    color: #6b7280;
+    color: var(--text-secondary);
     margin-bottom: 24px;
-    line-height: 1.5;
+}
+
+/* Custom Context Menu */
+.custom-context-menu {
+    position: fixed;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 4px 0;
+    min-width: 200px;
+    animation: fadeIn 0.1s ease-out;
+}
+
+.custom-context-menu .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.custom-context-menu .menu-item:hover {
+    background-color: var(--bg-light);
+    color: var(--primary-color);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .file-meta-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    border: 1px solid #e0f2f1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 16px;
 }
 
-.file-info {
+.file-icon-box {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #f9fafb;
-    padding: 12px 16px;
-    border-radius: 8px;
-    width: 100%;
+    justify-content: center;
     margin-bottom: 8px;
 }
 
-.file-details {
+.file-info-text {
+    text-align: center;
+}
+
+.file-info-text h4 {
+    margin: 0 0 4px 0;
+    color: var(--text-primary);
+}
+
+.file-info-text span {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.file-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.editor-wrapper-full {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-}
-
-.file-details h4 {
-    margin: 0;
-    font-size: 14px;
-    color: #1f2937;
-}
-
-.file-details span {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.file-actions {
-    display: flex;
-    gap: 12px;
-    width: 100%;
-    justify-content: center;
-}
-
-/* ProseMirror / Editor Content Styles */
-/* Basic editor styles */
-:host ::ng-deep .ProseMirror {
-    outline: none;
-    min-height: 29.7cm;
-    /* A4 height */
-    padding: 2cm 2.5cm;
-    /* Standard margins */
-    margin: 2rem auto;
-    background-color: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    max-width: 21cm;
-    /* A4 width */
-    font-size: 11pt;
-    line-height: 1.15;
-    /* Single spacing */
-    font-family: 'Calibri', 'Arial', sans-serif;
-    color: black;
-}
-
-/* Strictly remove margins from ALL block elements to prevent "double spacing" */
-::ng-deep .ProseMirror p,
-::ng-deep .ProseMirror h1,
-::ng-deep .ProseMirror h2,
-::ng-deep .ProseMirror h3,
-::ng-deep .ProseMirror h4,
-::ng-deep .ProseMirror h5,
-::ng-deep .ProseMirror h6,
-::ng-deep .ProseMirror ul,
-::ng-deep .ProseMirror ol,
-::ng-deep .ProseMirror li,
-::ng-deep .ProseMirror blockquote {
-    /* Only reset VERTICAL spacing. Do NOT touch margin-left/right as that controls indentation/alignment. */
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    /* Reset line-height to single spacing */
-    line-height: 1.15 !important;
-}
-
-/* Normalize Fonts: Override inline DOCX font specifications to ensure consistent rendering */
-::ng-deep .ProseMirror span {
-    font-family: inherit !important;
-    /* Optional: Normalize font size if it's jumping around, but usually users want to keep headings etc. */
-    /* font-size: inherit; */
-}
-
-:host ::ng-deep .ProseMirror img {
-    max-width: 100%;
-    height: auto;
-    display: inline-block;
-    vertical-align: top;
-}
-
-/* Table support for ProseMirror if needed */
-:host ::ng-deep .ProseMirror table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 1em 0;
-}
-
-:host ::ng-deep .ProseMirror td,
-:host ::ng-deep .ProseMirror th {
-    border: 1px solid #ddd;
-    padding: 4px 8px;
-}
-
-/* Page Break Visualization */
-:host ::ng-deep .ProseMirror br[style*="page-break-before"],
-:host ::ng-deep .ProseMirror br[style*="page-break-after"] {
-    display: block;
-    height: 20px;
-    background: repeating-linear-gradient(45deg,
-            #f0f0f0,
-            #f0f0f0 10px,
-            #e0e0e0 10px,
-            #e0e0e0 20px);
-    border-top: 1px dashed #ccc;
-    border-bottom: 1px dashed #ccc;
-    margin: 20px -60px;
-    /* Extend to edges */
-    position: relative;
-    content: "Page Break";
-    /* Does not work on br, but good for intent */
-}
-
-:host ::ng-deep .ProseMirror br[style*="page-break-before"]::after {
-    content: "Page Break";
-    display: block;
-    text-align: center;
-    color: #888;
-    font-size: 10px;
-    line-height: 20px;
-}
-
-/* Simulate Page Break as a Gap between sheets */
-/* We use the break element to push content down and create a 'hole' in the white background */
-/* Note: Since we can't easily split the ProseMirror div into multiple divs, we visual hack it:
-   We make the break element a wide block with the 'desk' background color, effectively hiding the white paper
-   and creating a gap. */
-
-::ng-deep br[style*="page-break"],
-::ng-deep div[style*="page-break"],
-::ng-deep .page-break {
-    display: block;
-    height: 30px;
-    /* Gap size */
-    background-color: #f0f2f5;
-    /* Match desk background */
-    margin: 0 -2.5cm;
-    /* Negative margin to extend to edges of the 'sheet' (counteracting padding) */
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-    position: relative;
-    content: " ";
-    /* Ensure it renders */
-    width: calc(100% + 5cm);
-    /* Full width including padding */
-}
-
-/* Optional: Add a "Page 2" label or dashed line inside the gap? 
-   No, just a clean gap is clearer for "separate pages". */
-
-
-/* Breadcrumb nav overrides */
-.breadcrumb-item {
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.breadcrumb-item:hover {
-    text-decoration: underline;
-}
-
-.breadcrumb-item.active {
-    cursor: default;
-    color: #111827;
-    text-decoration: none;
-}
-
-.breadcrumb-item.disabled {
-    color: #d1d5db;
-    cursor: not-allowed;
-}
-
-.breadcrumb-separator {
-    margin: 0 8px;
-    color: #9ca3af;
+    height: 100%;
+    flex: 1;
 }

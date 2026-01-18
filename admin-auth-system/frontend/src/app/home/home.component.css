@@ -1,33 +1,53 @@
-.home-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
-    padding-top: 60px;
-    box-sizing: border-box;
+/* Tailwind imports removed - relying on global styles */
+
+/* Additional custom styles if needed, though most are handled by Tailwind utility classes in the HTML */
+/* Fade in animation for modal */
+.animate-in {
+    animation-duration: 0.2s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
 }
 
-.dashboard-card {
-    background-color: var(--bg-card);
-    padding: 3rem;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    width: 100%;
-    max-width: 500px;
+.fade-in {
+    animation-name: fadeIn;
 }
 
-h1 {
-    margin-top: 0;
-    color: var(--primary);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
-.welcome-text {
-    font-size: 1.5rem;
-    margin: 2rem 0;
+.zoom-in-95 {
+    animation-name: zoomIn95;
 }
 
-.error-text {
-    color: var(--error);
+@keyframes zoomIn95 {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.slide-in-from-bottom-5 {
+    animation-name: slideInFromBottom5;
+}
+
+@keyframes slideInFromBottom5 {
+    from {
+        transform: translateY(1.25rem);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }

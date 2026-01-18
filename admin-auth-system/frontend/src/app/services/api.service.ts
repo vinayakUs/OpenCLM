@@ -17,9 +17,13 @@ export class ApiService {
         return this.http.get(this.API_URL + 'home', { responseType: 'text', withCredentials: true });
     }
 
-    getWorkflows(page: number, size: number): Observable<ApiResponse<PageResponse<Workflow>>> {
-        return this.http.get<ApiResponse<PageResponse<Workflow>>>(this.API_URL + 'workflows/', {
-            params: { page: page.toString(), size: size.toString() },
+    getWorkflows(page: number, size: number, search?: string): Observable<ApiResponse<PageResponse<Workflow>>> {
+        let params: any = { page: page.toString(), size: size.toString() };
+        if (search) {
+            params.search = search;
+        }
+        return this.http.get<ApiResponse<PageResponse<Workflow>>>(this.API_URL + 'workflows', {
+            params,
             withCredentials: true
         });
     }
@@ -38,6 +42,7 @@ export class ApiService {
     }
 
     createWorkflow(formData: FormData): Observable<ApiResponse<any>> {
+        console.log(formData);
         return this.http.post<ApiResponse<any>>(this.API_URL + 'workflows/', formData, {
             withCredentials: true
         });

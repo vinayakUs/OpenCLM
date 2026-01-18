@@ -32,12 +32,20 @@ export class SignupComponent {
             next: data => {
                 this.isSuccessful = true;
                 this.isSignUpFailed = false;
-                setTimeout(() => this.router.navigate(['/login']), 2000);
+                setTimeout(() => this.authService.login({}), 2000);
             },
             error: err => {
                 this.errorMessage = err.error.message || 'Signup failed';
                 this.isSignUpFailed = true;
             }
         });
+    }
+
+    setView(view: string) {
+        if (view === 'landing') {
+            this.router.navigate(['/']);
+        } else if (view === 'login') {
+            this.authService.login({});
+        }
     }
 }

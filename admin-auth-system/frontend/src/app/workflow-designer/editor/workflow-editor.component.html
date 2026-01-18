@@ -1,414 +1,442 @@
-<style>
-    .breadcrumb {
-        font-size: 14px;
-        margin-bottom: 16px;
-    }
-
-    .breadcrumb span {
-        cursor: pointer;
-        color: #1976d2;
-    }
-
-    .breadcrumb span.active {
-        font-weight: bold;
-        cursor: default;
-        color: #000;
-    }
-
-    .separator {
-        margin: 0 6px;
-        color: #999;
-    }
-</style>
-
-
 <div class="editor-layout">
-    <!-- Custom Editor Navbar -->
-    <header class="editor-navbar">
-        <div class="nav-left">
-            <button class="icon-btn back-btn" (click)="goBack()">
-                <span class="material-icons">arrow_back</span>
+
+    <!-- 1. Top Global Header (Row 1) -->
+    <header class="top-global-header">
+        <!-- Left: Branding & Workflow Info -->
+        <div class="header-left">
+            <button class="icon-btn-simple" (click)="goBack()">
+                <span class="material-icons">arrow_back_ios</span>
             </button>
-            <div class="workflow-title">
-                <input type="text" [(ngModel)]="workflowName" class="title-input" placeholder="Workflow Name">
-                <span class="status-draft">Draft</span>
+            <div class="workflow-info">
+                <input type="text" [(ngModel)]="workflowName" class="workflow-name-input" placeholder="Workflow Name">
+                <span class="separator">/</span>
+                <span class="template-name" [title]="uploadedFile?.name">{{ uploadedFile?.name || 'New Template'
+                    }}</span>
+                <button class="icon-btn-small" title="Settings">
+                    <span class="material-icons" style="font-size: 16px;">settings</span>
+                </button>
+                <span class="status-badge" [class.draft]="workflowStatus === 'DRAFT'">
+                    <span class="status-dot"></span>
+                    {{ workflowStatus }}
+                </span>
             </div>
         </div>
-        <div class="nav-right">
-            <button class="btn-secondary" (click)="save()">Save</button>
+
+        <!-- Right: Global Actions -->
+        <div class="header-actions">
+            <!-- Undo/Redo could go here or in toolbar, user image has them in top right sometimes, 
+                 but keeping search/alerts here per previous logic -->
+
+
+            <div class="separator-vertical"></div>
+
+            <div class="unsaved-changes">
+                <span class="material-icons" style="font-size: 14px; color: #f57c00;">warning</span>
+                <span>1</span>
+                <span class="material-icons" style="font-size: 14px;">more_vert</span>
+                <span style="color: #999;">Unsaved changes</span>
+            </div>
+
+            <button class="btn-outlined" title="Preview" disabled>
+                <span class="material-icons" style="font-size: 16px;">play_arrow</span>
+                Preview
+            </button>
+            <button class="btn-outlined" (click)="save()">Save</button>
             <button class="btn-primary" (click)="publish()">Publish</button>
         </div>
     </header>
 
-    <!-- Editor Content (2 Columns) -->
-    <div class="editor-container">
-        <div class="col-left">
-            <div class="scroll-content">
-                <div class="section-header">
-                    <h2>Variables</h2>
-                    <button class="btn-icon-add" (click)="addVariable()" title="Add Variable">
-                        <span class="material-icons">add</span>
-                    </button>
-                </div>
+    <!-- 2. Process Navigation Header (Row 2) -->
+    <header class="process-nav-header">
+        <!-- Left: Sidebar Toggle -->
+        <button class="sidebar-toggle-btn">
+            <span class="material-icons">view_sidebar</span>
+        </button>
 
-                <div class="variables-list">
-                    <div class="variable-card" *ngFor="let v of variables; let i = index"
-                        [class.expanded]="expandedIndex === i">
-                        <!-- Card Header (Always Visible) -->
-                        <div class="card-header" (click)="toggleExpand(i)">
-                            <div class="header-info">
-                                <span class="var-label">{{ v.uiLabel || 'Untitled' }}</span>
-                                <span class="type-badge">{{ v.type }}</span>
-                            </div>
-                            <div class="header-actions">
-                                <button class="btn-icon-small" (click)="insertVariable(v, $event)"
-                                    title="Insert Variable" *ngIf="v.name">
-                                    <span class="material-icons" style="font-size: 18px;">input</span>
-                                </button>
-                                <span class="material-icons expand-icon">{{ expandedIndex === i ? 'expand_less' :
-                                    'expand_more' }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Card Body (Expandable) -->
-                        <div class="card-body" *ngIf="expandedIndex === i">
-
-                            <!-- View Mode -->
-                            <div *ngIf="editingIndex !== i">
-                                <div class="view-row">
-                                    <span class="view-label">UI Label</span>
-                                    <span class="view-value">{{ v.uiLabel }}</span>
-                                </div>
-                                <div class="view-row">
-                                    <span class="view-label">Variable Name</span>
-                                    <span class="view-value">{{ v.name }}</span>
-                                </div>
-                                <div class="view-row">
-                                    <span class="view-label">Type</span>
-                                    <span class="view-value">{{ v.type | titlecase }}</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn-secondary small" (click)="startEdit(i, $event)"
-                                        style="margin-right:8px;">Edit</button>
-                                    <button class="btn-text-danger" (click)="deleteVariable(i, $event)">Remove</button>
-                                </div>
-                            </div>
-
-                            <!-- Edit Mode -->
-                            <div *ngIf="editingIndex === i">
-                                <div class="form-group">
-                                    <input type="text" [(ngModel)]="tempVariable.uiLabel" (input)="onLabelChange()"
-                                        placeholder="Enter Display Label">
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" [(ngModel)]="tempVariable.name" (input)="onNameInput()"
-                                        placeholder="variable_name">
-                                    <small
-                                        style="display:block; color:#666; font-size:11px; margin-top:2px; margin-left: 2px;">Lowercase
-                                        alphanumeric</small>
-                                </div>
-                                <div class="form-group">
-                                    <select [(ngModel)]="tempVariable.type" aria-label="Data Type">
-                                        <option value="string">String</option>
-                                        <option value="integer">Integer</option>
-                                    </select>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn-secondary small" (click)="cancelEdit()"
-                                        style="margin-right:8px;">Cancel</button>
-                                    <button class="btn-primary small" (click)="saveEdit()">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Center: Process Steps -->
+        <div class="process-nav">
+            <div class="nav-step" [class.active]="current === 'home'" (click)="selectTab('home')">
+                <span class="material-icons step-icon">description</span>
+                Document
             </div>
+            <span class="material-icons separator-chevron">chevron_right</span>
 
-            <div class="empty-state" *ngIf="variables.length === 0">
-                <p>No variables defined</p>
+            <div class="nav-step" [class.active]="current === 'contracts'" (click)="selectTab('contracts')">
+                <span class="material-icons step-icon">edit</span>
+                Create
+            </div>
+            <span class="material-icons separator-chevron">chevron_right</span>
+
+            <div class="nav-step disabled">
+                <span class="material-icons step-icon">check_circle</span>
+                Review
+            </div>
+            <span class="material-icons separator-chevron">chevron_right</span>
+
+            <div class="nav-step disabled">
+                <span class="material-icons step-icon">border_color</span>
+                Sign
+            </div>
+            <span class="material-icons separator-chevron">chevron_right</span>
+
+            <div class="nav-step disabled">
+                <span class="material-icons step-icon">archive</span>
+                Archive
             </div>
         </div>
 
-        <div class="col-right">
-            <div class="scroll-content">
-
-
-                <nav class="breadcrumb">
-                    @for(breadcrumb of breadcrumbs; track breadcrumb.key){
-                    <span class="breadcrumb-item" (click)="selectTab(breadcrumb.key)"
-                        [class.active]="breadcrumb.key === current && !isDisabled(breadcrumb.key)"
-                        [class.disabled]="isDisabled(breadcrumb.key)">
-                        {{breadcrumb.label}}
-                    </span>
-                    @if(breadcrumb.key !== breadcrumbs[breadcrumbs.length - 1].key){
-                    <span class="breadcrumb-separator">></span>
-                    }
-                    }
-                </nav>
+        <!-- Right: Spacer to balance layout -->
+        <div style="width: 40px;"></div>
+    </header>
 
 
 
+    <!-- 3. Main Workspace -->
+    <div class="workspace-container">
 
-                <!-- Content Area -->
-                <div [ngSwitch]="current">
+        <!-- Left Sidebar: Attributes -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    Attributes
+                    <span class="material-icons" style="font-size: 16px; color: #999;">expand_more</span>
+                </div>
+                <button class="icon-btn" (click)="addVariable()">
+                    <span class="material-icons">add</span>
+                </button>
+            </div>
 
-                    <div *ngSwitchCase="'home'">
-                        <!-- Initial Upload State -->
-                        <div class="upload-container">
-                            <div class="meta-card"
-                                style="background: white; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin-bottom: 24px;">
-                                <h3 style="margin-top: 0; font-size: 18px; color: #333; margin-bottom: 12px;">
-                                    Description</h3>
-                                <textarea [(ngModel)]="workflowDescription"
-                                    placeholder="Enter a brief description of this workflow..." rows="3"
-                                    style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"
-                                    onfocus="this.style.borderColor='#1976d2'"
-                                    onblur="this.style.borderColor='#e0e0e0'"></textarea>
-                            </div>
-
-                            <div class="upload-card">
-                                <!-- No File State -->
-                                <ng-container *ngIf="!uploadedFile">
-                                    <span class="material-icons upload-icon">cloud_upload</span>
-                                    <h3>Upload Contract Template</h3>
-                                    <p>Select a <strong>.docx</strong> file to begin creating your workflow. This file
-                                        will serve as the base template.</p>
-
-                                    <input type="file" #fileInput (change)="onFileSelected($event)" accept=".docx"
-                                        hidden>
-                                    <button class="btn-primary btn-large" (click)="fileInput.click()">
-                                        Choose File
-                                    </button>
-                                </ng-container>
-
-                                <!-- File Uploaded State -->
-                                <div class="file-meta-card" *ngIf="uploadedFile">
-                                    <span class="material-icons upload-icon" style="color: #34a853;">check_circle</span>
-                                    <h3>Template Uploaded</h3>
-
-                                    <div class="file-info">
-                                        <span class="material-icons file-icon">description</span>
-                                        <div class="file-details">
-                                            <h4>{{ uploadedFile.name }}</h4>
-                                            <span>{{ (uploadedFile.size / 1024).toFixed(2) }} KB</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="file-actions">
-                                        <input type="file" #changeInput (change)="onFileSelected($event)" accept=".docx"
-                                            hidden>
-                                        <button class="btn-outline" (click)="changeInput.click()">Change File</button>
-                                        <button class="btn-primary btn-large" (click)="selectTab('contracts')">Continue
-                                            to Editor</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Sidebar Content -->
+            <div class="sidebar-content">
+                <!-- Accordion Group 1: Properties -->
+                <div class="accordion-item">
+                    <!-- Note: Using 'properties' as section key (using expandedIndex for demo logic) -->
+                    <div class="accordion-header" (click)="toggleSection(0)">
+                        <span>PROPERTIES ({{variables.length}})</span>
+                        <span class="material-icons" style="color: #00897b;">
+                            {{ activeSection === 0 ? 'expand_less' : 'expand_more' }}
+                        </span>
                     </div>
 
-                    <div *ngSwitchCase="'contracts'">
-                        <!-- Canvas State (After Upload) -->
-                        <div class="canvas-view" *ngIf="uploadedFile">
-                            <!-- Header Removed -->
+                    <!-- Variable List as Pills -->
+                    <div class="accordion-body" *ngIf="activeSection === 0">
+                        <div *ngFor="let v of variables; let i = index" class="variable-pill" (click)="startEdit(i)"
+                            draggable="true" (dragstart)="onVariableDragStart(v, $event)">
 
-                            <div class="canvas-placeholder editor-wrapper">
-                                <!-- Toolbar -->
-                                <div class="editor-toolbar" *ngIf="editor">
-                                    <!-- History -->
-                                    <div class="button-group">
-                                        <button (click)="editor.chain().focus().undo().run()"
-                                            [disabled]="!editor.can().undo()" title="Undo">
-                                            <span class="material-icons">undo</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().redo().run()"
-                                            [disabled]="!editor.can().redo()" title="Redo">
-                                            <span class="material-icons">redo</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="divider-vertical"></div>
-
-                                    <!-- Structure -->
-                                    <div class="button-group">
-                                        <button (click)="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-                                            [class.is-active]="editor.isActive('heading', { level: 1 })"
-                                            title="Heading 1">
-                                            <span class="material-icons">looks_one</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleBulletList().run()"
-                                            [class.is-active]="editor.isActive('bulletList')" title="Bullet List">
-                                            <span class="material-icons">format_list_bulleted</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleOrderedList().run()"
-                                            [class.is-active]="editor.isActive('orderedList')" title="Ordered List">
-                                            <span class="material-icons">format_list_numbered</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleBlockquote().run()"
-                                            [class.is-active]="editor.isActive('blockquote')" title="Blockquote">
-                                            <span class="material-icons">format_quote</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="divider-vertical"></div>
-
-                                    <!-- Formatting -->
-                                    <div class="button-group">
-                                        <button (click)="editor.chain().focus().toggleBold().run()"
-                                            [class.is-active]="editor.isActive('bold')" title="Bold">
-                                            <span class="material-icons">format_bold</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleItalic().run()"
-                                            [class.is-active]="editor.isActive('italic')" title="Italic">
-                                            <span class="material-icons">format_italic</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleStrike().run()"
-                                            [class.is-active]="editor.isActive('strike')" title="Strike">
-                                            <span class="material-icons">strikethrough_s</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleCode().run()"
-                                            [class.is-active]="editor.isActive('code')" title="Code">
-                                            <span class="material-icons">code</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleUnderline().run()"
-                                            [class.is-active]="editor.isActive('underline')" title="Underline">
-                                            <span class="material-icons">format_underlined</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().unsetAllMarks().run()"
-                                            title="Clear Formatting">
-                                            <span class="material-icons">format_clear</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="divider-vertical"></div>
-
-                                    <!-- Sub/Sup -->
-                                    <div class="button-group">
-                                        <button (click)="editor.chain().focus().toggleSubscript().run()"
-                                            [class.is-active]="editor.isActive('subscript')" title="Subscript">
-                                            <span class="material-icons">subscript</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleSuperscript().run()"
-                                            [class.is-active]="editor.isActive('superscript')" title="Superscript">
-                                            <span class="material-icons">superscript</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="divider-vertical"></div>
-
-                                    <!-- Alignment -->
-                                    <div class="button-group">
-                                        <button (click)="editor.chain().focus().setTextAlign('left').run()"
-                                            [class.is-active]="editor.isActive({ textAlign: 'left' })"
-                                            title="Align Left">
-                                            <span class="material-icons">format_align_left</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().setTextAlign('center').run()"
-                                            [class.is-active]="editor.isActive({ textAlign: 'center' })"
-                                            title="Align Center">
-                                            <span class="material-icons">format_align_center</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().setTextAlign('right').run()"
-                                            [class.is-active]="editor.isActive({ textAlign: 'right' })"
-                                            title="Align Right">
-                                            <span class="material-icons">format_align_right</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().setTextAlign('justify').run()"
-                                            [class.is-active]="editor.isActive({ textAlign: 'justify' })"
-                                            title="Justify">
-                                            <span class="material-icons">format_align_justify</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="divider-vertical"></div>
-
-                                    <!-- Insert -->
-                                    <div class="button-group">
-                                        <button (click)="addPageBreak()" title="Insert Page Break">
-                                            <span class="material-icons">insert_page_break</span>
-                                            <span style="font-size: 13px; margin-left: 4px;">Break</span>
-                                        </button>
-                                        <button (click)="addImage()" title="Add Image">
-                                            <span class="material-icons">add_photo_alternate</span>
-                                            <span style="font-size: 13px; margin-left: 4px;">Image</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Editor Content -->
-                                <tiptap-bubble-menu [editor]="editor">
-                                    <div class="bubble-menu">
-                                        <button (click)="editor.chain().focus().toggleBold().run()"
-                                            [class.is-active]="editor.isActive('bold')" title="Bold">
-                                            <span class="material-icons">format_bold</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleItalic().run()"
-                                            [class.is-active]="editor.isActive('italic')" title="Italic">
-                                            <span class="material-icons">format_italic</span>
-                                        </button>
-                                        <button (click)="editor.chain().focus().toggleStrike().run()"
-                                            [class.is-active]="editor.isActive('strike')" title="Strike">
-                                            <span class="material-icons">strikethrough_s</span>
-                                        </button>
-                                        <div class="bubble-divider"></div>
-                                        <button (click)="editor.chain().focus().toggleCode().run()"
-                                            [class.is-active]="editor.isActive('code')" title="Code">
-                                            <span class="material-icons">code</span>
-                                        </button>
-                                    </div>
-                                </tiptap-bubble-menu>
-
-                                <div tiptap [editor]="editor"
-                                    style="height: calc(100% - 48px); overflow-y: auto; outline: none;"></div>
-                            </div>
+                            <div class="pill-icon-box">T</div>
+                            <span class="pill-label">{{ v.uiLabel || 'Untitled' }}</span>
+                            <span class="material-icons" style="font-size: 14px; color:#bbb;">edit</span>
                         </div>
 
+                        <!-- Empty state/add hint -->
+                        <div *ngIf="variables.length === 0"
+                            style="padding: 20px; text-align: center; font-size: 12px; color: #999;">
+                            No properties yet. Click + to add.
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Accordion Group 2: Clauses -->
+                <div class="accordion-item">
+                    <div class="accordion-header" (click)="toggleSection(1)">
+                        <span>CLAUSES</span>
+                        <span class="material-icons" style="color: #999;">
+                            {{ activeSection === 1 ? 'expand_less' : 'expand_more' }}
+                        </span>
+                    </div>
+                    <div class="accordion-body" *ngIf="activeSection === 1">
+                        <div style="font-size: 12px; color: #999;">No clauses available.</div>
+                    </div>
+                </div>
 
+                <!-- EDIT MODAL OVERLAY (Quick Mockup inside Sidebar) -->
+                <div *ngIf="editingIndex !== null" class="edit-overlay"
+                    style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.9); z-index: 50; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <h3 style="margin: 0; font-size: 14px;">Edit Variable</h3>
+
+                    <label style="font-size: 12px; color: #666;">Label</label>
+                    <input [(ngModel)]="tempVariable.uiLabel" (input)="onLabelChange()"
+                        style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+
+                    <label style="font-size: 12px; color: #666;">Name (ID)</label>
+                    <input [(ngModel)]="tempVariable.name" (input)="onNameInput()"
+                        style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+
+                    <label style="font-size: 12px; color: #666;">Type</label>
+                    <select [(ngModel)]="tempVariable.type"
+                        style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="STRING">String</option>
+                        <option value="INTEGER">Integer</option>
+                    </select>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
+                        <button class="btn-danger" (click)="deleteVariable(editingIndex!)">Delete</button>
+                        <button class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+                        <button class="btn-primary-small" (click)="saveEdit()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right: Editor Area -->
+        <main class="editor-area">
+
+            <!-- VIEW 1: Document (Home) - Description & Upload -->
+            <div *ngIf="current === 'home'" class="document-view">
+
+                <!-- Description Card -->
+                <div class="meta-card">
+                    <h3>Description</h3>
+                    <textarea [(ngModel)]="workflowDescription"
+                        placeholder="Enter a brief description of this workflow..." rows="3"></textarea>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-container-home">
+
+                    <!-- State A: No File -->
+                    <div class="upload-card" *ngIf="!uploadedFile">
+                        <span class="material-icons upload-icon">cloud_upload</span>
+                        <h3>Upload Contract Template</h3>
+                        <p>Select a <strong>.docx</strong> file to begin.</p>
+                        <input type="file" #fileInput (change)="onFileSelected($event)" accept=".docx" hidden>
+                        <button class="btn-primary-small" (click)="fileInput.click()">Choose File</button>
                     </div>
 
-                    <div *ngSwitchCase="'details'">
-                        <h3>Contract Details</h3>
-                        <p>Contract detail view</p>
+                    <!-- State B: File Uploaded -->
+                    <div class="file-meta-card" *ngIf="uploadedFile">
+                        <div class="file-icon-box">
+                            <span class="material-icons" style="color: #00897b; font-size: 32px;">description</span>
+                        </div>
+                        <div class="file-info-text">
+                            <h4>{{ uploadedFile.name }}</h4>
+                            <span>{{ (uploadedFile.size / 1024).toFixed(2) }} KB</span>
+                        </div>
+                        <div class="file-actions-row">
+                            <input type="file" #changeInput (change)="onFileSelected($event)" accept=".docx" hidden>
+                            <button class="btn-outlined" (click)="changeInput.click()">Change File</button>
+                            <button class="btn-primary" (click)="selectTab('contracts')">Continue to Editor</button>
+                        </div>
                     </div>
 
                 </div>
+            </div>
 
+            <!-- VIEW 2: Editor (Contracts) -->
+            <div class="editor-wrapper-full" *ngIf="current === 'contracts' || current === 'details'">
 
+                <!-- Editor Menu Bar (Tabs + Actions) -->
+                <div class="doc-tabs-header">
+                    <div class="tabs-left">
+                        <div class="doc-tab active">{{ uploadedFile?.name || 'New Document.docx' }}</div>
+                    </div>
 
+                    <div class="tabs-right">
+                        <div class="generate-control">
+                            <span class="material-icons" style="font-size: 16px; color: #757575;">auto_awesome</span>
+                            <span class="label">Generate document</span>
 
+                            <div class="dropdown-trigger">
+                                <span>Always</span>
+                                <span class="material-icons text-sm">expand_more</span>
+                            </div>
+                        </div>
+                        <div class="divider-vertical" style="height: 20px; margin: 0 8px;"></div>
+                        <button class="icon-btn-simple">
+                            <span class="material-icons">more_vert</span>
+                        </button>
+                    </div>
+                </div>
 
+                <!-- Toolbar (Centered) -->
+                <div class="editor-toolbar" *ngIf="editor">
 
+                    <!-- Mode Toggle (Tag / Edit) -->
+                    <div class="mode-toggle">
+                        <button class="toggle-option" [class.active]="editMode === 'TAG'"
+                            (click)="setMode('TAG')">Tag</button>
+                        <button class="toggle-option" [class.active]="editMode === 'EDIT'"
+                            (click)="setMode('EDIT')">Edit</button>
+                    </div>
 
+                    <div class="divider-vertical"></div>
 
+                    <!-- Font Family -->
+                    <div class="font-family-selector">
+                        <select (change)="onFontFamilyChange($event)"
+                            style="border:none; background:transparent; font-size:13px; color:#546e7a; outline:none; cursor:pointer; width: 80px;">
+                            <option value="Inter" selected>Inter</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times</option>
+                            <option value="Courier New">Courier</option>
+                        </select>
+                    </div>
 
+                    <!-- Font Size -->
+                    <div class="font-size-selector">
+                        <select (change)="onFontSizeChange($event)"
+                            style="border:none; background:transparent; font-size:13px; color:#546e7a; outline:none; cursor:pointer; width: 50px;">
+                            <option value="12px">12</option>
+                            <option value="14px" selected>14</option>
+                            <option value="16px">16</option>
+                            <option value="18px">18</option>
+                            <option value="20px">20</option>
+                            <option value="24px">24</option>
+                            <option value="30px">30</option>
+                        </select>
+                    </div>
 
+                    <div class="divider-vertical"></div>
 
+                    <!-- Basic Formatting -->
+                    <div class="button-group">
+                        <button (click)="editor.chain().focus().toggleBold().run()"
+                            [class.is-active]="editor.isActive('bold')" title="Bold">
+                            <span class="material-icons">format_bold</span>
+                        </button>
+                        <button (click)="editor.chain().focus().toggleItalic().run()"
+                            [class.is-active]="editor.isActive('italic')" title="Italic">
+                            <span class="material-icons">format_italic</span>
+                        </button>
+                        <button (click)="editor.chain().focus().toggleUnderline().run()"
+                            [class.is-active]="editor.isActive('underline')" title="Underline">
+                            <span class="material-icons">format_underlined</span>
+                        </button>
 
+                        <!-- Text Color -->
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="color" (input)="onColorChange($event)"
+                                style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;"
+                                title="Text Color">
+                            <button title="Text Color">
+                                <span class="material-icons"
+                                    [style.color]="editor.getAttributes('textStyle')['color'] || 'inherit'">format_color_text</span>
+                            </button>
+                        </div>
+                        <!-- Highlight -->
+                        <button (click)="editor.chain().focus().toggleHighlight().run()"
+                            [class.is-active]="editor.isActive('highlight')" title="Highlight">
+                            <span class="material-icons">border_color</span>
+                        </button>
+                        <!-- Link -->
+                        <button (click)="addLink()" [class.is-active]="editor.isActive('link')" title="Insert Link">
+                            <span class="material-icons">link</span>
+                        </button>
+                        <!-- Image Upload -->
+                        <button (click)="imageInput.click()" title="Insert Image">
+                            <span class="material-icons">image</span>
+                        </button>
+                        <input type="file" #imageInput (change)="onImageSelected($event)" accept="image/*" hidden>
+                    </div>
 
+                    <div class="divider-vertical"></div>
 
+                    <!-- Alignment -->
+                    <div class="button-group">
+                        <button (click)="editor.chain().focus().setTextAlign('left').run()"
+                            [class.is-active]="editor.isActive({ textAlign: 'left' })" title="Align Left">
+                            <span class="material-icons">format_align_left</span>
+                        </button>
+                        <button (click)="editor.chain().focus().setTextAlign('center').run()"
+                            [class.is-active]="editor.isActive({ textAlign: 'center' })" title="Align Center">
+                            <span class="material-icons">format_align_center</span>
+                        </button>
+                        <button (click)="editor.chain().focus().setTextAlign('right').run()"
+                            [class.is-active]="editor.isActive({ textAlign: 'right' })" title="Align Right">
+                            <span class="material-icons">format_align_right</span>
+                        </button>
+                        <button (click)="editor.chain().focus().setTextAlign('justify').run()"
+                            [class.is-active]="editor.isActive({ textAlign: 'justify' })" title="Justify">
+                            <span class="material-icons">format_align_justify</span>
+                        </button>
+                    </div>
 
+                    <div class="divider-vertical"></div>
 
+                    <!-- Lists & Indent -->
+                    <div class="button-group">
+                        <button (click)="editor.chain().focus().toggleBulletList().run()"
+                            [class.is-active]="editor.isActive('bulletList')" title="Bullet List">
+                            <span class="material-icons">format_list_bulleted</span>
+                        </button>
+                        <button (click)="editor.chain().focus().toggleOrderedList().run()"
+                            [class.is-active]="editor.isActive('orderedList')" title="Ordered List">
+                            <span class="material-icons">format_list_numbered</span>
+                        </button>
+                        <button (click)="outdent()" title="Outdent">
+                            <span class="material-icons">format_indent_decrease</span>
+                        </button>
+                        <button (click)="indent()" title="Indent">
+                            <span class="material-icons">format_indent_increase</span>
+                        </button>
+                    </div>
 
+                    <div class="divider-vertical"></div>
 
+                    <!-- Zoom Controls -->
+                    <div class="zoom-controls">
+                        <button class="icon-btn-small" (click)="adjustZoom(-10)" title="Zoom Out"><span
+                                class="material-icons">remove</span></button>
+                        <span class="zoom-text">{{ zoomLevel }}%</span>
+                        <button class="icon-btn-small" (click)="adjustZoom(10)" title="Zoom In"><span
+                                class="material-icons">add</span></button>
+                    </div>
+                </div>
 
+                <!-- Canvas Container -->
+                <div class="canvas-scroller">
+                    <!-- Editor is always present here if we are in 'contracts' tab -->
+                    <!-- Check if file exists, else show prompt to go back? 
+                          Technically selectTab handles this check, so we assume safe. -->
+                    <div tiptap [editor]="editor" class="editor-content"
+                        [style.transform]="'scale(' + zoomLevel / 100 + ')'" [style.transform-origin]="'top center'">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Custom Context Menu -->
+    <div class="custom-context-menu" *ngIf="contextMenu.visible" [style.top.px]="contextMenu.y"
+        [style.left.px]="contextMenu.x">
+        <div class="menu-item" (click)="createVariableFromSelection()">
+            <span class="material-icons" style="font-size: 16px; color: #00897b;">data_object</span>
+            Create Variable from "{{ contextMenu.selectedText | slice:0:15 }}{{ contextMenu.selectedText.length > 15 ?
+            '...' : '' }}"
+        </div>
 
+        <div class="menu-separator" *ngIf="variables.length > 0" style="height: 1px; background: #eee; margin: 4px 0;">
+        </div>
 
+        <div *ngIf="variables.length > 0" style="padding: 4px 12px; font-size: 11px; font-weight: 600; color: #999;">
+            INSERT EXISTING</div>
 
+        <div class="menu-item" *ngFor="let v of variables" (click)="insertVariableFromContext(v)">
+            <span class="material-icons" style="font-size: 16px; color: #555;">code</span>
+            {{ v.uiLabel }}
+        </div>
+    </div>
+    <!-- Create Variable Modal -->
+    <div class="modal-backdrop" *ngIf="createModalVisible">
+        <div class="modal-card">
+            <h3>Create New Variable</h3>
 
+            <label>Display Label</label>
+            <input [(ngModel)]="newVariableData.uiLabel" (input)="onNewVarLabelChange()"
+                placeholder="e.g. Customer Name">
 
+            <label>Variable Name (ID)</label>
+            <input [(ngModel)]="newVariableData.name" (input)="onNewVarNameInput()" placeholder="e.g. customer_name">
 
+            <label>Type</label>
+            <select [(ngModel)]="newVariableData.type">
+                <option value="STRING">String</option>
+                <option value="INTEGER">Integer</option>
+            </select>
 
-
-
-
-
-
-
-
-
-
-
-
+            <div class="modal-actions">
+                <button class="btn-secondary" (click)="closeCreateVariableModal()">Cancel</button>
+                <button class="btn-primary" (click)="confirmCreateVariable()">Create</button>
             </div>
         </div>
     </div>

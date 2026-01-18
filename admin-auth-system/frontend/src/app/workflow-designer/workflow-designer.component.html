@@ -1,27 +1,68 @@
 <div class="designer-container">
+
+    <!-- Header -->
     <div class="header-actions">
         <h1>Workflow Designer</h1>
-        <button class="btn-primary" (click)="createNew()">
-            <span class="material-icons">add</span>
-            Create New Workflow
-        </button>
+        <div class="header-buttons">
+            <div class="dropdown-trigger-btn" (click)="toggleCreateMenu()" style="position: relative;">
+                <button class="btn-primary-dark">Create new</button>
+                <button class="btn-primary-dark-icon"><span class="material-icons">expand_more</span></button>
+
+                <!-- Dropdown Menu -->
+                @if (showCreateMenu()) {
+                <div class="dropdown-menu">
+                    <div class="menu-item" (click)="createNew()">
+                        New internal workflow
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
     </div>
 
-    <div class="workflow-grid">
+    <!-- Top Action Cards -->
+    <div class="actions-grid">
+        <!-- New Internal Workflow -->
+        <div class="action-card" (click)="createNew()" style="max-width: 320px; flex: inherit;">
+            <div class="plus-icon">+</div>
+            <h3>New internal workflow</h3>
+            <p>Contract launched by members of your OpenCLM team in CLM</p>
+        </div>
+    </div>
+
+    <div class="section-header-row">
+        <div class="section-title">
+            <h2>All workflows</h2>
+            <span>{{ totalPages() * pageSize() }} configurations</span>
+        </div>
+
+        <div class="search-box">
+            <span class="material-icons">search</span>
+            <input type="text" placeholder="Search workflows..." appDebounceInput (debouncedInput)="onSearch($event)" />
+        </div>
+    </div>
+
+    <div class="workflow-list-container">
+        <!-- Grid replaced by list below -->
         @for (wf of workflows(); track wf.id) {
-        <div class="workflow-card">
-            <div class="card-header">
-                <span class="icon-box">
-                    <span class="material-icons">account_tree</span>
+        <div class="workflow-list-item">
+            <div class="list-item-main">
+                <h3>{{ wf.name }}</h3>
+                <span class="status-capsule" [class.draft]="(wf.currentStatus || 'PUBLISHED') === 'DRAFT'">
+                    <span class="dot"></span>
+                    {{ wf.currentStatus || 'Published' }}
                 </span>
-                <span class="status-badge" [class.published]="wf.currentStatus === 'PUBLISHED'">{{ wf.currentStatus
-                    }}</span>
+                <p class="description-text">{{ wf.description || 'No description available' }}</p>
+                <div class="metadata-row">
+                    <span>Created: {{ wf.createdAt | date:'mediumDate' }}</span>
+                    <span>•</span>
+                    <span>Updated: {{ wf.updatedAt | date:'mediumDate' }}</span>
+                </div>
             </div>
-            <h3>{{ wf.name }}</h3>
-            <p>{{ wf.description }}</p>
-            <div class="card-footer">
-                <span class="date">{{ wf.createdAt | date:'mediumDate' }}</span>
-                <button class="btn-text">Edit</button>
+            <div class="list-item-actions">
+                <button class="icon-btn-small" style="background:none; border:none; cursor:pointer; color:#90a4ae;">
+                    <span class="material-icons">more_vert</span>
+                </button>
             </div>
         </div>
         }

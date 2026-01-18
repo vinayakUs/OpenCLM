@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,9 +15,22 @@ import { AuthService } from '../../services/auth.service';
 })
 export class NavbarComponent implements OnInit {
   isDropdownOpen = false;
+  isNotificationOpen = false;
   user$: Observable<any> | undefined;
 
-  constructor(private authService: AuthService) { }
+  private notificationService = inject(NotificationService);
+  notifications = this.notificationService.allNotifications;
+  unreadCount = this.notificationService.unreadCount;
+
+  constructor(private authService: AuthService, private router: Router, private eRef: ElementRef) { }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: Event) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.isDropdownOpen = false;
+      this.isNotificationOpen = false;
+    }
+  }
 
   ngOnInit(): void {
     this.user$ = this.authService.getUser().pipe(
@@ -31,9 +45,25 @@ export class NavbarComponent implements OnInit {
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) this.isNotificationOpen = false;
+  }
+
+  toggleNotifications() {
+    this.isNotificationOpen = !this.isNotificationOpen;
+    if (this.isNotificationOpen) this.isDropdownOpen = false;
+  }
+
+  markAsRead(id: string) {
+    this.notificationService.markAsRead(id);
+  }
+
+  markAllRead() {
+    this.notificationService.markAllAsRead();
   }
 
   logout() {
     this.authService.logout();
   }
+
+
 }
