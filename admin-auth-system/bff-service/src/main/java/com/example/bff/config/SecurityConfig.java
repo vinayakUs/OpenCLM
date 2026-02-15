@@ -2,6 +2,7 @@ package com.example.bff.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
 import com.example.bff.domain.user.service.CustomOidcUserService;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +30,12 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/user").permitAll()
                                                 .anyRequest().authenticated())
+
+                                .exceptionHandling(exceptions -> exceptions
+                                                // This prevents the redirect to the HTML login page
+                                                .authenticationEntryPoint(
+                                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+
                                 .oauth2Login(oauth2 -> oauth2
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .oidcUserService(customOidcUserService))
@@ -35,7 +43,7 @@ public class SecurityConfig {
                                                                 .baseUri("/api/oauth2/authorization"))
                                                 .redirectionEndpoint(redirection -> redirection
                                                                 .baseUri("/api/login/oauth2/code/*"))
-                                                .defaultSuccessUrl("http://localhost:4200/home", true))
+                                                .defaultSuccessUrl("http://localhost:4200/dashboard", true))
                                 .logout(logout -> logout
                                                 .logoutUrl("/api/logout")
                                                 .logoutSuccessHandler(logoutSuccessHandler)

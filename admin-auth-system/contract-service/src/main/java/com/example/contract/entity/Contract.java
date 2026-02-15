@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true ,callSuper = false)
-public class Contract extends  AuditableEntity{
+public class Contract extends AuditableEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

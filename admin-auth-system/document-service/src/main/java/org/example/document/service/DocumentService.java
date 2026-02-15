@@ -1,15 +1,24 @@
 package org.example.document.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.docx4j.Docx4J;
 import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.convert.out.HTMLSettings;
+import org.docx4j.model.datastorage.migration.VariablePrepare;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -116,4 +125,109 @@ public class DocumentService {
         wordMLPackage.save(out);
         return out.toByteArray();
     }
-}
+
+
+    public byte[] generateDocxFromTemplate(MultipartFile templateFile , Map<String, Object> inputJson) throws Exception{
+
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            // 2️⃣ Convert Input to Case-Insensitive Map
+            Map<String, String> caseInsensitiveInput = new HashMap<>();
+            inputJson.forEach((k, v) -> caseInsensitiveInput.put(k.toLowerCase(), String.valueOf(v)));
+
+            // 3️⃣ Load DOCX
+            WordprocessingMLPackage pkg = WordprocessingMLPackage.load(
+                    templateFile.getInputStream());
+
+            // ⭐ IMPORTANT FIX
+            // Handle potentially malformed docs that crash VariablePrepare (e.g. "100.0"
+            // integer error)
+            try {
+                VariablePrepare.prepare(pkg);
+            } catch (Exception e) {
+                System.err.println(
+                        "Warning: VariablePrepare failed (likely malformed DOCX), continuing without run checks: "
+                                + e.getMessage());
+            }
+
+            // 4️⃣ Scan & Replace in ALL Parts (Main, Header, Footer)
+
+            // Collect all parts that might contain variables
+            java.util.List<org.docx4j.openpackaging.parts.JaxbXmlPart<?>> targetParts = new java.util.ArrayList<>();
+
+            // Main Document
+            targetParts.add(pkg.getMainDocumentPart());
+
+            // Headers & Footers
+            pkg.getParts().getParts().values().forEach(part -> {
+                if (part instanceof org.docx4j.openpackaging.parts.WordprocessingML.HeaderPart ||
+                        part instanceof org.docx4j.openpackaging.parts.WordprocessingML.FooterPart) {
+                    targetParts.add((org.docx4j.openpackaging.parts.JaxbXmlPart<?>) part);
+                }
+            });
+
+            // Support standard ${key}, {{key}} and simple {key} formats
+            java.util.regex.Pattern pattern = java.util.regex.Pattern
+                    .compile("(\\$\\{([^}]+)\\})|(\\{\\{([^}]+)\\}\\})|(\\{([^}]+)\\})");
+
+            for (org.docx4j.openpackaging.parts.JaxbXmlPart<?> part : targetParts) {
+                String xmlContent = part.getXML();
+                java.util.regex.Matcher matcher = pattern.matcher(xmlContent);
+
+                StringBuilder sb = new StringBuilder();
+                boolean modified = false;
+
+                while (matcher.find()) {
+                    // Group 2: ${key}, Group 4: {{key}}, Group 6: {key}
+                    String key;
+                    if (matcher.group(2) != null) {
+                        key = matcher.group(2);
+                    } else if (matcher.group(4) != null) {
+                        key = matcher.group(4);
+                    } else {
+                        key = matcher.group(6);
+                    }
+
+                    String inputVal = caseInsensitiveInput.get(key.toLowerCase());
+
+                    if (inputVal != null) {
+                        // XML Escape the value to prevent invalid XML
+                        String escapedVal = inputVal.replace("&", "&amp;")
+                                .replace("<", "&lt;")
+                                .replace(">", "&gt;")
+                                .replace("\"", "&quot;")
+                                .replace("'", "&apos;");
+
+                        matcher.appendReplacement(sb,
+                                java.util.regex.Matcher.quoteReplacement(escapedVal));
+                        modified = true;
+                    }
+                }
+                matcher.appendTail(sb);
+
+                if (modified) {
+                    try {
+                        // Unmarshal the modified XML string back to JAXB object
+                        Object unmarshalled = org.docx4j.XmlUtils
+                                .unmarshalString(sb.toString());
+                        ((org.docx4j.openpackaging.parts.JaxbXmlPart) part)
+                                .setJaxbElement(unmarshalled);
+                    } catch (Exception e) {
+                        System.err.println(
+                                "Failed to apply changes to part: " + e.getMessage());
+                        // Continue to next part, don't fail entire request
+                    }
+                }
+            }
+            // 5️⃣ Save output
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            pkg.save(out);
+            return out.toByteArray();
+
+    }
+
+
+    }
+
+

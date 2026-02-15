@@ -6,16 +6,21 @@ import com.example.common.dto.VariableResponse;
 import com.example.common.dto.PageResponse;
 import com.example.common.dto.WorkflowStatus;
 import com.example.workflow.entity.WorkflowTemplate;
+import com.example.workflow.entity.WorkflowTemplate_;
 import com.example.workflow.entity.WorkflowVariable;
 import com.example.workflow.exception.WorkflowNotFoundException;
 import com.example.workflow.repository.WorkflowTemplateRepository;
 import com.example.workflow.repository.WorkflowVariableRepository;
 import com.example.workflow.service.WorkflowService;
+import com.example.workflow.specification.WorkflowSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -101,16 +106,32 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public PageResponse<WorkflowResponse> getAllWorkflow(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PageResponse<WorkflowResponse> getAllWorkflow(String search, int page, int size, String sortBy,
+            String direction) {
 
-        Page<WorkflowTemplate> response ;
-        if (search != null && !search.isBlank()) {
-            response = workflowTemplateRepository
-                    .findAllByNameContainingIgnoreCase(search, pageable);
+        Specification<WorkflowTemplate> specification = Specification.where(
+                WorkflowSpecification.filterName(search));
+
+        Map<String, JpaSort> SORTS = Map.of(
+                "createdAt", JpaSort.of(WorkflowTemplate_.createdAt),
+                "name", JpaSort.of(WorkflowTemplate_.name)
+
+        );
+
+        JpaSort jpaSort = SORTS.getOrDefault(
+                sortBy,
+                SORTS.get("createdAt"));
+        Sort finalSort;
+        if ("DESC".equalsIgnoreCase(direction)) {
+            finalSort = jpaSort.descending();
         } else {
-            response = workflowTemplateRepository.findAll(pageable);
+            finalSort = jpaSort.ascending();
         }
+        Pageable pageable = PageRequest.of(page, size, finalSort);
+
+        Page<WorkflowTemplate> response = workflowTemplateRepository.findAll(specification, pageable);
+
+        System.out.println(response.getContent());
 
         Page<WorkflowResponse> mappedPage = response.map(this::mapToResponse);
 

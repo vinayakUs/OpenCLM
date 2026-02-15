@@ -20,9 +20,8 @@ public class DocumentClient {
 
     private final WebClient webClient;
 
-    public DocumentClient(@Qualifier("default-web-client") WebClient.Builder builder,
-            @org.springframework.beans.factory.annotation.Value("${app.apis.document}") String documentUrl) {
-        this.webClient = builder.baseUrl(documentUrl).build();
+    public DocumentClient(@Qualifier("default-web-client") WebClient.Builder builder) {
+        this.webClient = builder.baseUrl("lb://document-service").build();
     }
 
     public String parseDocxToHtml(MultipartFile file) {

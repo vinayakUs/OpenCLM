@@ -1,4 +1,0 @@
-This is a test file for upload functionality.
-It contains some dummy text.
-1234567890
-End of file.

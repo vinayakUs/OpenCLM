@@ -102,9 +102,9 @@ public class DocumentController {
                 }
             });
 
-            // Support standard ${key} and simple {key} formats
+            // Support standard ${key}, {{key}} and simple {key} formats
             java.util.regex.Pattern pattern = java.util.regex.Pattern
-                    .compile("(\\$\\{([^}]+)\\})|(\\{([^}]+)\\})");
+                    .compile("(\\$\\{([^}]+)\\})|(\\{\\{([^}]+)\\}\\})|(\\{([^}]+)\\})");
 
             for (org.docx4j.openpackaging.parts.JaxbXmlPart<?> part : targetParts) {
                 String xmlContent = part.getXML();
@@ -114,8 +114,15 @@ public class DocumentController {
                 boolean modified = false;
 
                 while (matcher.find()) {
-                    // Group 2 is content of ${...}, Group 4 is content of {...}
-                    String key = matcher.group(2) != null ? matcher.group(2) : matcher.group(4);
+                    // Group 2: ${key}, Group 4: {{key}}, Group 6: {key}
+                    String key;
+                    if (matcher.group(2) != null) {
+                        key = matcher.group(2);
+                    } else if (matcher.group(4) != null) {
+                        key = matcher.group(4);
+                    } else {
+                        key = matcher.group(6);
+                    }
 
                     String inputVal = caseInsensitiveInput.get(key.toLowerCase());
 

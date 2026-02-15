@@ -1,743 +1,898 @@
 {
-    "info": {
-        "_postman_id": "aa123456-7890-1234-5678-9abcdef01234",
-        "name": "Admin Auth System",
-        "description": "Collection for OpenCLM Admin Auth System Services",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
-    "item": [
+  "info": {
+    "_postman_id": "981e4504-0a13-4786-a3b6-62c3c52827c1",
+    "name": "Admin Auth System Copy",
+    "description": "Collection for OpenCLM Admin Auth System Services",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13682877"
+  },
+  "item": [
+    {
+      "name": "Auth Service (9000)",
+      "item": [
         {
-            "name": "Auth Service (9000)",
-            "item": [
-                {
-                    "name": "Signup",
-                    "request": {
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"name\": \"Test Admin\",\n    \"email\": \"admin@test.com\",\n    \"password\": \"password123\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:9000/auth/signup",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "9000",
-                            "path": [
-                                "auth",
-                                "signup"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Login",
-                    "event": [
-                        {
-                            "listen": "test",
-                            "script": {
-                                "exec": [
-                                    "var jsonData = pm.response.json();",
-                                    "if (jsonData.accessToken) {",
-                                    "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
-                                    "} else if (jsonData.token) {",
-                                    "    pm.environment.set(\"accessToken\", jsonData.token);",
-                                    "}"
-                                ],
-                                "type": "text/javascript"
-                            }
-                        }
-                    ],
-                    "request": {
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"email\": \"admin@test.com\",\n    \"password\": \"password123\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:9000/auth/login",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "9000",
-                            "path": [
-                                "auth",
-                                "login"
-                            ]
-                        }
-                    },
-                    "response": []
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Test Admin\",\n    \"email\": \"admin@test.com\",\n    \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
                 }
-            ]
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9000/auth/signup",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9000",
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
         },
         {
-            "name": "BFF Service (8082)",
-            "description": "Requires 'BFFSESSIONID' cookie. Authenticate via Browser or OAuth flow.",
-            "item": [
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
+                  "} else if (jsonData.token) {",
+                  "    pm.environment.set(\"accessToken\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
                 {
-                    "name": "Get Home",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8082/api/home",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8082",
-                            "path": [
-                                "api",
-                                "home"
-                            ]
-                        }
-                    },
-                    "response": []
+                  "key": "username",
+                  "value": "admin@test.com",
+                  "type": "text"
                 },
                 {
-                    "name": "Get User Profile",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8082/api/user",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8082",
-                            "path": [
-                                "api",
-                                "user"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get All Workflows",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8082/api/workflows/?page=0&size=10",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8082",
-                            "path": [
-                                "api",
-                                "workflows",
-                                ""
-                            ],
-                            "query": [
-                                {
-                                    "key": "page",
-                                    "value": "0"
-                                },
-                                {
-                                    "key": "size",
-                                    "value": "10"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Create Workflow",
-                    "request": {
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                },
-                                {
-                                    "key": "data",
-                                    "value": "{\"name\": \"My Workflow\", \"description\": \"Test workflow\"}",
-                                    "type": "text",
-                                    "contentType": "application/json"
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8082/api/workflows/",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8082",
-                            "path": [
-                                "api",
-                                "workflows",
-                                ""
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Upload Document (Parse)",
-                    "request": {
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8082/api/documents/upload",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8082",
-                            "path": [
-                                "api",
-                                "documents",
-                                "upload"
-                            ]
-                        }
-                    },
-                    "response": []
+                  "key": "password",
+                  "value": "password123",
+                  "type": "text"
                 }
-            ]
-        },
-        {
-            "name": "Workflow Service (8084)",
-            "item": [
-                {
-                    "name": "Get All Workflows",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8084/workflow/?page=0&size=10",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8084",
-                            "path": [
-                                "workflow",
-                                ""
-                            ],
-                            "query": [
-                                {
-                                    "key": "page",
-                                    "value": "0"
-                                },
-                                {
-                                    "key": "size",
-                                    "value": "10"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Workflow by ID",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8084/workflow/{id}",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8084",
-                            "path": [
-                                "workflow",
-                                "{id}"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Create Workflow",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"name\": \"Direct Workflow\",\n    \"content\": \"...\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:8084/workflow/",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8084",
-                            "path": [
-                                "workflow",
-                                ""
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Update Workflow",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"name\": \"Updated Workflow\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:8084/workflow/{id}",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8084",
-                            "path": [
-                                "workflow",
-                                "{id}"
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
-        },
-        {
-            "name": "Notification Service (8085)",
-            "item": [
-                {
-                    "name": "Send Notification",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"recipient\": \"user@example.com\",\n    \"subject\": \"Test Notification\",\n    \"message\": \"Hello from Postman\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:8085/internal/notifications/send",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8085",
-                            "path": [
-                                "internal",
-                                "notifications",
-                                "send"
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
-        },
-        {
-            "name": "Storage Service (8083)",
-            "item": [
-                {
-                    "name": "Upload File (Local/DB)",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8083/storage/files/upload",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8083",
-                            "path": [
-                                "storage",
-                                "files",
-                                "upload"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Upload to S3",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                },
-                                {
-                                    "key": "bucket",
-                                    "value": "my-bucket",
-                                    "type": "text"
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8083/storage/upload",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8083",
-                            "path": [
-                                "storage",
-                                "upload"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Check S3 File",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "http://localhost:8083/storage/download?bucket=my-bucket&key=myfile.txt",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8083",
-                            "path": [
-                                "storage",
-                                "download"
-                            ],
-                            "query": [
-                                {
-                                    "key": "bucket",
-                                    "value": "my-bucket"
-                                },
-                                {
-                                    "key": "key",
-                                    "value": "myfile.txt"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
-        },
-        {
-            "name": "Document Service (8086)",
-            "item": [
-                {
-                    "name": "Convert DOCX to HTML",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8086/service/document/convert/docxToHtml",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8086",
-                            "path": [
-                                "service",
-                                "document",
-                                "convert",
-                                "docxToHtml"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Convert HTML to DOCX",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"html\": \"<h1>Hello World</h1>\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:8086/service/document/convert/HtmlToDocx",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8086",
-                            "path": [
-                                "service",
-                                "document",
-                                "convert",
-                                "HtmlToDocx"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Generate from Template",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "template",
-                                    "type": "file",
-                                    "src": []
-                                },
-                                {
-                                    "key": "data",
-                                    "value": "{\"name\": \"John Doe\"}",
-                                    "type": "text",
-                                    "contentType": "application/json"
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "http://localhost:8086/service/document/convert/generateFromTemplate",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8086",
-                            "path": [
-                                "service",
-                                "document",
-                                "convert",
-                                "generateFromTemplate"
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
-        },
-        {
-            "name": "Contract Service (8088)",
-            "item": [
-                {
-                    "name": "Create Contract",
-                    "request": {
-                        "auth": {
-                            "type": "bearer",
-                            "bearer": [
-                                {
-                                    "key": "token",
-                                    "value": "{{accessToken}}",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"partyA\": \"Company A\",\n    \"partyB\": \"Company B\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "http://localhost:8088/contract/",
-                            "protocol": "http",
-                            "host": [
-                                "localhost"
-                            ],
-                            "port": "8088",
-                            "path": [
-                                "contract",
-                                ""
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:9000/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9000",
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
         }
-    ]
+      ]
+    },
+    {
+      "name": "BFF Service (8082)",
+      "item": [
+        {
+          "name": "Get Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/home",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "home"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the JSON body\r",
+                  "const jsonData = pm.response.json();\r",
+                  "\r",
+                  "// Check if the 'jwt' field exists and set the variable\r",
+                  "if (jsonData.jwt) {\r",
+                  "    pm.collectionVariables.set(\"accessToken\", jsonData.jwt);\r",
+                  "    console.log(\"Success: JWT saved to variable 'bearerToken'\");\r",
+                  "} else {\r",
+                  "    console.warn(\"JWT not found in the response body\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/user",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Contract",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/contract/?query=NDA",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "contract",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "NDA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Workflows",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/workflows?search=test&page=0&size=10&sortBy=createdAt&direction=asc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "workflows"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "test"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "direction",
+                  "value": "asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Workflow",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/C:/Users/vinayak/Downloads/Non_Disclosure_Agreement_draft.docx"
+                },
+                {
+                  "key": "data",
+                  "value": "{\"name\": \"My Workflow\", \"description\": \"Test workflow\"}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/workflows/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "workflows",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Document (Parse)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "postman-cloud:///1f0e4eed-06d5-41a0-8ef9-a2d5ffe39e29"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/documents/upload",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "documents",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Workflow By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/workflows/62ad9c2f-eabf-4281-ae43-90b4e6ba7cb3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "workflows",
+                "62ad9c2f-eabf-4281-ae43-90b4e6ba7cb3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Requires 'BFFSESSIONID' cookie. Authenticate via Browser or OAuth flow."
+    },
+    {
+      "name": "Workflow Service (8084)",
+      "item": [
+        {
+          "name": "Get All Workflows",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/workflow?page=0&size=10&sortBy=createdAt&direction=asc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "workflow"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "direction",
+                  "value": "asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Workflow by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/workflow/62ad9c2f-eabf-4281-ae43-90b4e6ba7cb3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "workflow",
+                "62ad9c2f-eabf-4281-ae43-90b4e6ba7cb3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Workflow",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Direct Workflow\",\n    \"description\": \"Created via API\",\n    \"templateFileId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"currentStatus\": \"DRAFT\",\n    \"variables\": [\n        {\n            \"variableName\": \"variable1\",\n            \"dataType\": \"STRING\",\n            \"label\": \"Variable 1\",\n            \"required\": true,\n            \"defaultValue\": \"default\",\n            \"sortValue\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/workflow/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "workflow",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Workflow",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Workflow\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/workflow/{id}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "workflow",
+                "{id}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notification Service (8085)",
+      "item": [
+        {
+          "name": "Send Notification",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"OTP_SENT\",\n  \"channel\": \"EMAIL\",\n  \"recipient\": \"radhikaandrew12@gmail.com\",\n  \"referenceType\": \"AUTH\",\n  \"variables\": {\n    \"otp\": \"123456\",\n    \"expiryMinutes\": \"5\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8085/internal/notifications/send",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8085",
+              "path": [
+                "internal",
+                "notifications",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Storage Service (8083)",
+      "item": [
+        {
+          "name": "Upload File (Local/DB)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8083/storage/files/upload",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "storage",
+                "files",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload to S3",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "key": "bucket",
+                  "value": "my-bucket",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8083/storage/upload",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "storage",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check S3 File",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/storage/download?bucket=my-bucket&key=myfile.txt",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "storage",
+                "download"
+              ],
+              "query": [
+                {
+                  "key": "bucket",
+                  "value": "my-bucket"
+                },
+                {
+                  "key": "key",
+                  "value": "myfile.txt"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Document Service (8086)",
+      "item": [
+        {
+          "name": "Convert DOCX to HTML",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8086/service/document/convert/docxToHtml",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8086",
+              "path": [
+                "service",
+                "document",
+                "convert",
+                "docxToHtml"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert HTML to DOCX",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"html\": \"<h1>Hello World</h1>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8086/service/document/convert/HtmlToDocx",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8086",
+              "path": [
+                "service",
+                "document",
+                "convert",
+                "HtmlToDocx"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate from Template",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "template",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "key": "data",
+                  "value": "{\"name\": \"John Doe\"}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8086/service/document/convert/generateFromTemplate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8086",
+              "path": [
+                "service",
+                "document",
+                "convert",
+                "generateFromTemplate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contract Service (8088)",
+      "item": [
+        {
+          "name": "Create Contract",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workflowId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"name\": \"NDA – ABC Pvt Ltd\",\n    \"formData\": {\n        \"client_name\": \"ABC Pvt Ltd\",\n        \"duration_months\": 12,\n        \"is_priority\": true,\n        \"effective_date\": \"2026-01-09\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8088/contract",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8088",
+              "path": [
+                "contract"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Contract",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8088/contract?page=0&pageSize=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8088",
+              "path": [
+                "contract"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "default"
+    }
+  ]
 }

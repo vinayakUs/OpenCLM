@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,16 +48,30 @@ public class WorkflowController {
     @GetMapping()
     public Mono<ResponseEntity<ApiResponse<PageResponse<WorkflowResponse>>>> getAllWorkflows(
             @RequestParam(required = false) String search,
-            @RequestParam int page,
-            @RequestParam int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdDt")  String sortBy,
+            @RequestParam(defaultValue = "DESC")  String direction
+           ) {
 
-        return workflowService.getAllWorkflows(search,page, size).
+        return workflowService.getAllWorkflows(search,page, size,sortBy,direction).
                 map(x->
                         ResponseEntity.ok().body(
                                 ApiResponse.success(x)
                         )
                         );
 
+    }
+
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<ApiResponse<WorkflowResponse>>> getWorkflow(@PathVariable UUID id,
+                                                                           @RegisteredOAuth2AuthorizedClient("bff-client") OAuth2AuthorizedClient client
+    ) {
+        System.out.println("called getWorkflow" + client.getAccessToken().getTokenValue());
+        return workflowService.getWorkflowById(id).map(
+                x->
+                        ResponseEntity.ok().body(ApiResponse.success(x))
+        );
     }
 
 }

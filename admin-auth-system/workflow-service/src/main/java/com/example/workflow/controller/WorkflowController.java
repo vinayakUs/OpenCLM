@@ -6,8 +6,6 @@ import com.example.common.dto.PageResponse;
 import com.example.common.dto.WorkflowResponse;
 import com.example.workflow.service.WorkflowService;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -32,8 +30,10 @@ public class WorkflowController {
     public ApiResponse<PageResponse<WorkflowResponse>> getAllWorkflow(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(workflowService.getAllWorkflow(search,page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdDt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String direction) {
+        return ApiResponse.success(workflowService.getAllWorkflow(search, page, size, sortBy, direction));
     }
 
     @PutMapping("/{id}")

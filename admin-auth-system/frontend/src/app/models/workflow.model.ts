@@ -1,3 +1,15 @@
+export interface WorkflowBase{
+  createdAt:string;
+  createdBy:string;
+  currentStatus: 'DRAFT' | 'PUBLISHED';
+  description: string;
+  id: string;
+  name: string;
+  templateFileId: string;
+  updatedAt: string;
+  version: number;
+}
+
 export interface Workflow {
     id: string;
     name: string;

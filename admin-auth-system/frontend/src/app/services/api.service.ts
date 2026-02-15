@@ -3,26 +3,27 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
-import { Workflow, PageResponse } from '../models/workflow.model';
+import {Workflow, PageResponse, WorkflowBase} from '../models/workflow.model';
+import {WorkflowDetails} from  '../pages/dashboard/dashboard';
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
+
     private API_URL = environment.apiBaseUrl + '/'; // Gateway URL
 
     constructor(private http: HttpClient) { }
 
-    getHomeContent(): Observable<any> {
-        return this.http.get(this.API_URL + 'home', { responseType: 'text', withCredentials: true });
-    }
 
-    getWorkflows(page: number, size: number, search?: string): Observable<ApiResponse<PageResponse<Workflow>>> {
+
+    getWorkflowsSearchRes(page: number, size: number, search?: string): Observable<ApiResponse<PageResponse<WorkflowBase>>> {
         let params: any = { page: page.toString(), size: size.toString() };
         if (search) {
             params.search = search;
         }
-        return this.http.get<ApiResponse<PageResponse<Workflow>>>(this.API_URL + 'workflows', {
+        return this.http.get<ApiResponse<PageResponse<WorkflowBase>>>(this.API_URL + 'workflows', {
             params,
             withCredentials: true
         });
@@ -42,9 +43,20 @@ export class ApiService {
     }
 
     createWorkflow(formData: FormData): Observable<ApiResponse<any>> {
-        console.log(formData);
         return this.http.post<ApiResponse<any>>(this.API_URL + 'workflows/', formData, {
             withCredentials: true
         });
+    }
+
+    getWorkflowById(id:string|null):Observable<ApiResponse<WorkflowDetails>>{
+      if(id==null){alert("Id is null");}
+      return this.http.get<ApiResponse<WorkflowDetails>>(this.API_URL + "workflows/" + id , {withCredentials: true});
+    }
+
+    createContract(formData: any):Observable<ApiResponse<any>> {
+
+      return this.http.post<ApiResponse<any>>(this.API_URL + 'contract',formData,{
+        withCredentials: true
+      });
     }
 }

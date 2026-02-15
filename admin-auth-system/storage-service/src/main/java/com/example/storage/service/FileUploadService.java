@@ -6,9 +6,13 @@ import com.example.storage.repository.FileStorageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,14 @@ public class FileUploadService {
                 entity.getMimeType(),
                 entity.getSizeInBytes());
 
+    }
+
+    public byte[] downloadFile(String keyName,String bucketName) {
+        GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .key(keyName)
+                .bucket(bucketName)
+                .build();
+        CompletableFuture<ResponseBytes<GetObjectResponse>> response = getAsyncClient().getObject(objectRequest, AsyncResponseTransformer.toBytes());
     }
 
 }

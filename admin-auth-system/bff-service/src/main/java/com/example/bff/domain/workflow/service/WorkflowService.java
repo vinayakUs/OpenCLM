@@ -2,12 +2,14 @@ package com.example.bff.domain.workflow.service;
 
 import com.example.bff.domain.workflow.client.WorkflowClient;
 import com.example.bff.domain.workflow.dto.*;
+import com.example.common.dto.ApiResponse;
 import com.example.common.dto.WorkflowResponse;
 import com.example.common.dto.PageResponse;
 import com.example.common.dto.WorkflowStatus;
 import com.example.bff.domain.document.service.FileUploadService;
 import com.example.bff.domain.document.dto.FileUploadResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
@@ -54,8 +56,18 @@ public class WorkflowService implements IWorkflowService {
 
     }
 
-    public Mono<PageResponse<WorkflowResponse>> getAllWorkflows(String search , int page, int size) {
-        return workflowClient.getAllWorkflowv2(search , page, size);
+    public Mono<PageResponse<WorkflowResponse>> getAllWorkflows(String search , int page, int size, String sortBy, String direction) {
+        return workflowClient.getAllWorkflow(search , page, size,sortBy, direction);
+    }
+
+    @Override
+    public Mono<WorkflowResponse> getWorkflowById(UUID id) {
+
+        return workflowClient.getWorkflowById(id).map(
+                x-> x
+        );
+
+
     }
 
 }

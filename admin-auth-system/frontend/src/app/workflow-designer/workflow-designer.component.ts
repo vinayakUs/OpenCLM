@@ -34,14 +34,15 @@ export class WorkflowDesignerComponent implements OnInit {
   }
 
   loadWorkflows() {
-    this.apiService.getWorkflows(this.currentPage(), this.pageSize(), this.searchTerm()).subscribe({
+    this.apiService.getWorkflowsSearchRes(this.currentPage(), this.pageSize(), this.searchTerm()).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.workflows.set(response.data.content);
+          // Casting WorkflowBase[] to Workflow[] as they are compatible for this view
+          this.workflows.set(response.data.content as unknown as Workflow[]);
           this.totalPages.set(response.data.totalPages);
         }
       },
-      error: (error) => console.error('Error fetching workflows:', error)
+      error: (error: any) => console.error('Error fetching workflows:', error)
     });
   }
 

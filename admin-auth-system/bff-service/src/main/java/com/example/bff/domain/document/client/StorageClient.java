@@ -18,9 +18,8 @@ public class StorageClient {
 
     private final WebClient webClient;
 
-    StorageClient(@Qualifier("default-web-client") WebClient.Builder builder,
-            @org.springframework.beans.factory.annotation.Value("${app.apis.storage}") String storageUrl) {
-        this.webClient = builder.baseUrl(storageUrl).build();
+    StorageClient(@Qualifier("default-web-client") WebClient.Builder builder ) {
+        this.webClient = builder.baseUrl("lb://storage-service").build();
     }
 
     public FileUploadResponse storeFileS3(MultipartFile file) {

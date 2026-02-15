@@ -13,5 +13,5 @@ public interface WorkflowService {
 
     UUID postWorkflowTemplate(WorkflowCreateRequest dto);
 
-    PageResponse<WorkflowResponse> getAllWorkflow(String search,int page, int size);
+    PageResponse<WorkflowResponse> getAllWorkflow(String search,int page, int size,String sortBy,String direction);
 }

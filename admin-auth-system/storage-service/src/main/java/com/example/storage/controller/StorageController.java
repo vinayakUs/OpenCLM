@@ -25,8 +25,10 @@ public class StorageController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<String> generatePresignedUrl(@RequestParam("bucket") String bucket,
-            @RequestParam("key") String key) {
+    public ResponseEntity<String> generatePresignedUrl(
+            @RequestParam("bucket") String bucket,
+            @RequestParam("key") String key
+        ) {
         // Simple implementation - in real world would return presigned URL or stream
         // content
         // For now let's just confirm it's there
