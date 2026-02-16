@@ -18,6 +18,9 @@ public class FileStorage {
     @Column(name = "original_name", nullable = false)
     private String originalName;
 
+    @Column(name = "s3_key" ,nullable = false)
+    private String s3Key; // s3 key
+
     @Column(name = "file_path", nullable = false)
     private String filePath; // S3/MinIO path
 

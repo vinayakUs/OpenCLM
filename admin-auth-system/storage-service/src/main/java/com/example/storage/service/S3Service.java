@@ -3,6 +3,7 @@ package com.example.storage.service;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.example.storage.exception.FileStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,25 +26,24 @@ public class S3Service {
     @Value("${app.bucket.name}")
     private String bucketName;
 
-    public String uploadFile(String folder, MultipartFile file) {
-        String key = folder + UUID.randomUUID() + "_" + file.getOriginalFilename();
+    public String uploadFile(String key, MultipartFile file) {
 
+        if(file.isEmpty()){
+            throw new IllegalArgumentException("Cannot upload empty file");
+        }
         PutObjectRequest putRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
                 .build();
-
         try {
             s3Client.putObject(
                     putRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
+            return "s3://" + bucketName + "/" + key;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
+            throw new FileStorageException("Failed to upload file to S3", e);
         }
-
-        return "s3://" + bucketName + "/" + key;
     }
 
     public byte[] downloadFile(String key) {

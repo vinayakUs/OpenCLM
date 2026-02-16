@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS file_storage (
                               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
                               original_name VARCHAR(255) NOT NULL,
+                              s3_key TEXT NOT NULL,
                               file_path TEXT NOT NULL,                    -- S3/MinIO path
                               mime_type VARCHAR(100),
                               size_in_bytes BIGINT,
