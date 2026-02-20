@@ -48,6 +48,8 @@ app:
 logging:
   level:
     io.awspring.cloud.s3: DEBUG
+  pattern:
+    level: "%5p [%X{traceId},%X{spanId}]"
 
 eureka:
   client:
@@ -59,3 +61,8 @@ eureka:
   instance:
     prefer-ip-address: true
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    config-url: /swagger-ui
