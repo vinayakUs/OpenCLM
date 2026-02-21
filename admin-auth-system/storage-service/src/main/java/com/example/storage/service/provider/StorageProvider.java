@@ -38,5 +38,5 @@ public interface StorageProvider {
      * @param key The unique identifier to delete.
      * @throws FileStorageException If the deletion fails due to provider issues.
      */
-    public void deleteFile(String key);
+    void deleteFile(String key);
 }

@@ -4,7 +4,6 @@ import com.example.common.dto.Api.ApiResponseV2;
 import com.example.storage.dto.FileUploadResponse;
 import com.example.storage.dto.InternalFileResponse;
 import com.example.storage.service.FileUploadService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +11,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.oauth2.jwt.Jwt;
-
+import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/storage/files")
 @RequiredArgsConstructor
+@Validated
 public class FileStorageController {
 
     private final FileUploadService fileUploadService;
@@ -34,13 +34,21 @@ public class FileStorageController {
 
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadFile(
-            @RequestParam(name = "id" ) @NotNull(message = "File id required") UUID id){
+            @RequestParam(name = "id") UUID id) {
 
         InternalFileResponse res = fileUploadService.downloadFile(id);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION ,"attachment; filename=\"" + res.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + res.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(res.getFileSize()))
                 .body(res.getFile());
     }
 
+    @DeleteMapping("/delete")
+    public ApiResponseV2<Void> deleteFile(
+            @RequestParam(name = "id") UUID id){
+
+        fileUploadService.deleteFile(id);
+        return ApiResponseV2.success(null);
+    }
 
 }

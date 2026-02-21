@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -47,6 +48,9 @@ public class S3StorageProvider implements StorageProvider{
         }catch (IOException e){
             log.error("Failed to read file input stream for key: {}", key, e);
             throw new FileStorageException("Failed to upload file to S3: IO Error",e);
+        }catch (SdkClientException ex){
+            log.error("Failed to upload file to S3: AWS Connection Error");
+            throw new FileStorageException("Failed to upload file to S3: AWS Connection Error",ex);
         }catch (S3Exception e){
             log.error("S3 Upload failed for key: {}", key, e);
             throw new FileStorageException("Failed to upload file to S3: Service Error",e);
@@ -61,8 +65,9 @@ public class S3StorageProvider implements StorageProvider{
                     .key(key)
                     .build();
             return s3Client.getObjectAsBytes(request).asByteArray();
-        }catch (S3Exception e){
-            log.error("Failed to download file from S3: {}" ,key,e);
+        }catch (SdkClientException ex){
+            throw new FileStorageException("Failed to download file: AWS Connection Error",ex);
+        } catch (S3Exception e){
             throw new FileStorageException("Failed to download file from S3", e);
         }
     }
@@ -75,6 +80,8 @@ public class S3StorageProvider implements StorageProvider{
                     .key(key)
                     .build();
             s3Client.deleteObject(request);
+        }catch (SdkClientException ex){
+            throw new FileStorageException("Failed to delete file: AWS Connection Error",ex);
         }catch (S3Exception e){
             log.error("Failed to delete file from S3: {}",key);
             throw new FileStorageException("Failed to delete file from S3",e);

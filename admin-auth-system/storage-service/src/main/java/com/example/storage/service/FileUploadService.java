@@ -3,8 +3,9 @@ package com.example.storage.service;
 import com.example.storage.dto.FileUploadResponse;
 import com.example.storage.dto.InternalFileResponse;
 import com.example.storage.entity.FileStorage;
+import com.example.storage.exception.FileDeleteException;
+import com.example.storage.exception.FileDownloadException;
 import com.example.storage.exception.FileNotFoundException;
-import com.example.storage.exception.FileStorageException;
 import com.example.storage.exception.FileUploadException;
 import com.example.storage.repository.FileStorageRepository;
 import com.example.storage.service.provider.StorageProvider;
@@ -23,7 +24,6 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadService {
 
-    private final S3Service s3Service;
     private final FileStorageRepository fileStorageRepository;
     private final UuidShardedKeyGenerator uuidShardedKeyGenerator;
     private final StorageProvider storageProvider;
@@ -45,7 +45,7 @@ public class FileUploadService {
                         entity.setMimeType(file.getContentType());
                         entity.setSizeInBytes(file.getSize());
                         entity.setUploadedBy(uploadedBy);
-                        entity.setS3Key(key);
+                        entity.setStorageKey(key);
                         fileStorageRepository.save(entity);
                         return new FileUploadResponse(
                                 entity.getId(),
@@ -71,15 +71,33 @@ public class FileUploadService {
 
         FileStorage fileStorage = fileStorageRepository.findById(id)
                 .orElseThrow(() -> new FileNotFoundException("Record not found for ID: " + id, null));
-
-        byte[] bytes =  s3Service.downloadFile(fileStorage.getS3Key());
-        InternalFileResponse response = new InternalFileResponse();
-        response.setFileName(fileStorage.getOriginalName());
-        response.setExt(FileUtils.getFileExtension(fileStorage.getOriginalName()));
-        response.setFile(bytes);
-        response.setFileId(id);
-        return response;
+        try{
+            byte[] fileBytes =  storageProvider.downloadFile(fileStorage.getStorageKey());
+            InternalFileResponse response = new InternalFileResponse();
+            response.setFileSize(fileBytes.length);
+            response.setFileName(fileStorage.getOriginalName());
+            response.setExt(FileUtils.getFileExtension(fileStorage.getOriginalName()));
+            response.setFile(fileBytes);
+            response.setFileId(id);
+            return response;
+        }catch (Exception e){
+            throw new FileDownloadException("Failed to download file" ,e);
+        }
 
     }
+    @Transactional
+    public void deleteFile(UUID id) {
 
+        FileStorage fileStorage = fileStorageRepository.findById(id).orElseThrow(
+                ()-> new FileNotFoundException("Record not found for ID: "+id , null)
+        );
+        fileStorageRepository.deleteById(fileStorage.getId());
+        try{
+            storageProvider.deleteFile(fileStorage.getStorageKey());
+        }catch (Exception e){
+            log.error("Storage delete failed. Restoring DB record for file: {}", fileStorage.getId());
+            throw new FileDeleteException("Failed to delete file from storage provider" ,e);
+        }
+
+    }
 }

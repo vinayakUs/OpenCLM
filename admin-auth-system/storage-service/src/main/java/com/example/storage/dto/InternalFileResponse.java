@@ -14,4 +14,5 @@ public class InternalFileResponse {
     private UUID fileId;
     private String fileName;
     private String ext;
+    private long fileSize;
 }
