@@ -53,3 +53,4 @@ app:
 logging:
   level:
     org.springframework.security: DEBUG
+    org.springframework.boot: DEBUG

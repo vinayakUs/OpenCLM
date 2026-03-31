@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
-import {Workflow, PageResponse, WorkflowBase} from '../models/workflow.model';
-import {WorkflowDetails} from  '../pages/dashboard/dashboard';
+import { Workflow, PageResponse, WorkflowBase } from '../models/workflow.model';
+import { WorkflowDetails } from '../pages/dashboard/dashboard';
 
 
 @Injectable({
@@ -48,15 +48,15 @@ export class ApiService {
         });
     }
 
-    getWorkflowById(id:string|null):Observable<ApiResponse<WorkflowDetails>>{
-      if(id==null){alert("Id is null");}
-      return this.http.get<ApiResponse<WorkflowDetails>>(this.API_URL + "workflows/" + id , {withCredentials: true});
+    getWorkflowById(id: string | null): Observable<ApiResponse<WorkflowDetails>> {
+        if (id == null) { alert("Id is null"); }
+        return this.http.get<ApiResponse<WorkflowDetails>>(this.API_URL + "workflows/" + id, { withCredentials: true });
     }
 
-    createContract(formData: any):Observable<ApiResponse<any>> {
+    createContract(formData: any): Observable<ApiResponse<any>> {
 
-      return this.http.post<ApiResponse<any>>(this.API_URL + 'contract',formData,{
-        withCredentials: true
-      });
+        return this.http.post<ApiResponse<any>>(this.API_URL + 'contract', formData, {
+            withCredentials: true
+        });
     }
 }

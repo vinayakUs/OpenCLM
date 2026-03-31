@@ -1,7 +1,8 @@
 package com.example.storage.service;
 
+import com.example.storage.exception.FileStorageException;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,34 +26,39 @@ public class S3Service {
     @Value("${app.bucket.name}")
     private String bucketName;
 
-    public String uploadFile(String folder, MultipartFile file) {
-        String key = folder + UUID.randomUUID() + "_" + file.getOriginalFilename();
+    public String uploadFile(String key, MultipartFile file) {
 
+        // 1. Validate
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Cannot upload empty file");
+        }
+
+        // 2. Prepare Request
         PutObjectRequest putRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
                 .build();
 
+        // 4. Upload Sync
         try {
             s3Client.putObject(
                     putRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
+            return "s3://" + bucketName + "/" + key;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
+            throw new FileStorageException("Failed to upload file to S3", e);
         }
-
-        return "s3://" + bucketName + "/" + key;
     }
 
-    public byte[] downloadFile(String key) {
+    public CompletableFuture<byte[]> downloadFile(String key) {
 
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
-        return s3Client.getObjectAsBytes(request).asByteArray();
+
+        return CompletableFuture.supplyAsync(() -> s3Client.getObjectAsBytes(request).asByteArray());
 
     }
 

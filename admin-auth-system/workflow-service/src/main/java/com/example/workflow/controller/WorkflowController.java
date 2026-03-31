@@ -28,11 +28,11 @@ public class WorkflowController {
 
     @GetMapping()
     public ApiResponse<PageResponse<WorkflowResponse>> getAllWorkflow(
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdDt") String sortBy,
-            @RequestParam(defaultValue = "DESC") String direction) {
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "createdDt") String sortBy,
+            @RequestParam(name = "direction", defaultValue = "DESC") String direction) {
         return ApiResponse.success(workflowService.getAllWorkflow(search, page, size, sortBy, direction));
     }
 

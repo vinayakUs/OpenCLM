@@ -3,6 +3,7 @@ package com.example.bff.domain.document.client;
 import com.example.bff.domain.document.dto.FileUploadResponse;
 import com.example.bff.exception.FileUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
@@ -13,53 +14,50 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class StorageClient {
 
     private final WebClient webClient;
 
-    StorageClient(@Qualifier("default-web-client") WebClient.Builder builder ) {
+    StorageClient(@Qualifier("default-web-client") WebClient.Builder builder) {
         this.webClient = builder.baseUrl("lb://storage-service").build();
     }
 
     public FileUploadResponse storeFileS3(MultipartFile file) {
 
+        try {
+            MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+            multipartBodyBuilder.part(
+                    "file",
+                    file.getResource()).filename(file.getOriginalFilename())
+                    .contentType(MediaType.parseMediaType(file.getContentType()));
 
-                try {
-                    MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-                    multipartBodyBuilder.part(
-                                    "file",
-                                    file.getResource()
-                            ).filename(file.getOriginalFilename())
-                            .contentType(MediaType.parseMediaType(file.getContentType()))
-                    ;
-
-
-                    return   webClient.post()
-                            .uri("/storage/files/upload")
-                            .contentType(MediaType.MULTIPART_FORM_DATA)
-                            .body(
-                                    BodyInserters.fromMultipartData(multipartBodyBuilder.build())
-                            )
-                            .retrieve()
-                            .onStatus(status -> status.isError(),
-                                    clientResponse ->
-                                            clientResponse.bodyToMono(String.class).flatMap(
-                                                    body -> Mono.error(new FileUploadException("File Upload Failed : " + body, null)
-                                                    )
-                                            )
-                            )
-                            .bodyToMono(FileUploadResponse.class)
-                          .block();
-                } catch (WebClientRequestException ex) {
-                    throw new FileUploadException("Storage service unreachable: ", ex);
-                } catch (WebClientResponseException ex) {
-                    throw new FileUploadException("Storage service error: " + ex.getStatusCode(), ex);
-                }catch (Exception ex){
-                    throw new FileUploadException("Unexpected file upload error", ex);
-                }
+            return webClient.post()
+                    .uri("/storage/files/upload")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(
+                            BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
+                    .retrieve()
+                    .onStatus(status -> status.isError(),
+                            clientResponse -> clientResponse.bodyToMono(String.class).flatMap(
+                                    body -> Mono
+                                            .<Throwable>error(new FileUploadException("File Upload Failed : " + body,
+                                                    HttpStatus.valueOf(clientResponse.statusCode().value())))))
+                    .bodyToMono(FileUploadResponse.class)
+                    .block();
+        } catch (WebClientRequestException ex) {
+            throw new FileUploadException("Storage service unreachable: ", ex);
+        } catch (WebClientResponseException ex) {
+            throw new FileUploadException("Storage service error: " + ex.getStatusCode(), ex);
+        } catch (FileUploadException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Error calling storage service", ex);
+            throw new FileUploadException("Unexpected file upload error", ex);
+        }
     }
 
 }
-
-

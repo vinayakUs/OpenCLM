@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import {
   LucideAngularModule,
   Bell,
@@ -21,8 +21,8 @@ import {
   X,
   Calendar
 } from 'lucide-angular';
-import {ApiService} from '../../services/api.service';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 interface WorkflowDef {
   id: string;
   name: string;
@@ -128,7 +128,7 @@ interface ContractCreationRequest {
 })
 
 
-class Dashboard  {
+class Dashboard {
 
   isWorkflowMenuOpen = signal(false);
   dropdownSearchQuery = signal('');
@@ -139,7 +139,7 @@ class Dashboard  {
   private readonly fb = inject(FormBuilder);
   modalSearchQuery = signal('');
   isWorkflowLoading = signal<boolean>(false);
-  selectedWorkflowDetails = signal<WorkflowDetails|null>(null);
+  selectedWorkflowDetails = signal<WorkflowDetails | null>(null);
   @ViewChild('dropdownContainer') dropdownContainer!: ElementRef;
   @ViewChild('menuTrigger') menuTrigger!: ElementRef;
   form = this.fb.group({
@@ -302,7 +302,7 @@ class Dashboard  {
     this.loadWorkflowDetails(id);
   }
 
-  buildForm(workflowId: string ) {
+  buildForm(workflowId: string) {
     const currentName = this.form.get('name')?.value || '';
     const group: any = {
     };
@@ -311,7 +311,7 @@ class Dashboard  {
     group['name'] = [currentName]
 
 
-    for(const f of this.selectedWorkflowDetails()?.variableResponse ??[] ){
+    for (const f of this.selectedWorkflowDetails()?.variableResponse ?? []) {
       group[f.variableName] = [f.defaultValue ?? ''];
     }
     this.form = this.fb.group(group);
@@ -334,7 +334,7 @@ class Dashboard  {
     const name = this.form.get('name')!.value;
 
 
-    if(name === null || name === '') {
+    if (name === null || name === '') {
       alert("Contract Name required");
       return;
     }
@@ -350,17 +350,17 @@ class Dashboard  {
 
     this.apiService.createContract(request).subscribe(
       {
-        next:(data)=>{
-          if(data.success){
+        next: (data) => {
+          if (data.success) {
 
             alert("Contract Created");
             this.closeModal()
 
           }
         },
-        error:(err)=>{
+        error: (err) => {
           console.log(err);
-          alert(err.error.error.status + '\n' +err.error.error.message);
+          alert(err.error.error.status + '\n' + err.error.error.message);
         }
       }
     );
