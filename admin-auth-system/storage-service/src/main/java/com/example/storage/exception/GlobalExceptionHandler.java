@@ -1,7 +1,5 @@
 package com.example.storage.exception;
 
-package com.example.storage.exception;
-
 import com.example.common.dto.ApiErrorV2;
 import com.example.common.dto.ApiResponseV2;
 import lombok.extern.slf4j.Slf4j;
