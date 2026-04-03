@@ -66,3 +66,17 @@ springdoc:
     path: /api-docs
   swagger-ui:
     config-url: /swagger-ui
+
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

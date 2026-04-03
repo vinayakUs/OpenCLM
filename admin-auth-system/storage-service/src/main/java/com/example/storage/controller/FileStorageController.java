@@ -8,11 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
@@ -24,12 +23,18 @@ public class FileStorageController {
     private final FileUploadService fileUploadService;
 
     @PostMapping("/upload")
-    public ApiResponseV2<FileUploadResponse> upload(
+    public ResponseEntity<ApiResponseV2<FileUploadResponse>> upload(
             @RequestPart("file") MultipartFile file,
             @AuthenticationPrincipal Jwt jwt) {
 
+//        ApiErrorV2 err = ApiErrorV2.<Void>builder().code("INTERNAL ERROR").message("ERROR FROM SERVER CLIENT").build();
+//        ApiResponseV2<FileUploadResponse> r = new ApiResponseV2<>();
+//        r.setError(err);
+
+//        return  ResponseEntity.status(HttpStatusCode.valueOf(400)).body(null);
+
         FileUploadResponse response = fileUploadService.uploadFile(file, UUID.fromString(jwt.getSubject()));
-        return ApiResponseV2.success(response);
+        return ResponseEntity.ok(ApiResponseV2.success(response));
     }
 
     @GetMapping("/download")
