@@ -12,7 +12,6 @@ import java.util.UUID;
 public class FileUploadResponse {
     private UUID fileId;
     private String originalName;
-    private String filePath;
     private String mimeType;
     private Long size;
 }

@@ -4,7 +4,9 @@ import com.example.common.dto.Api.ApiResponseV2;
 import com.example.storage.dto.FileUploadResponse;
 import com.example.storage.dto.InternalFileResponse;
 import com.example.storage.service.FileUploadService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +14,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.UUID;
 
 @RestController
@@ -25,16 +28,14 @@ public class FileStorageController {
     @PostMapping("/upload")
     public ResponseEntity<ApiResponseV2<FileUploadResponse>> upload(
             @RequestPart("file") MultipartFile file,
-            @AuthenticationPrincipal Jwt jwt) {
-
-//        ApiErrorV2 err = ApiErrorV2.<Void>builder().code("INTERNAL ERROR").message("ERROR FROM SERVER CLIENT").build();
-//        ApiResponseV2<FileUploadResponse> r = new ApiResponseV2<>();
-//        r.setError(err);
-
-//        return  ResponseEntity.status(HttpStatusCode.valueOf(400)).body(null);
+            @AuthenticationPrincipal Jwt jwt, HttpServletRequest request) {
 
         FileUploadResponse response = fileUploadService.uploadFile(file, UUID.fromString(jwt.getSubject()));
-        return ResponseEntity.ok(ApiResponseV2.success(response));
+        ApiResponseV2<FileUploadResponse> r = ApiResponseV2.success(response);
+        r.setTraceId(MDC.get("traceId"));
+        r.setPath(request.getRequestURI());
+
+        return ResponseEntity.ok(r);
     }
 
     @GetMapping("/download")
@@ -49,11 +50,15 @@ public class FileStorageController {
     }
 
     @DeleteMapping("/delete")
-    public ApiResponseV2<Void> deleteFile(
-            @RequestParam(name = "id") UUID id){
+    public ResponseEntity<ApiResponseV2<Void>> deleteFile(
+            @RequestParam(name = "id") UUID id, HttpServletRequest request) {
 
         fileUploadService.deleteFile(id);
-        return ApiResponseV2.success(null);
+        ApiResponseV2<Void> response = ApiResponseV2.success(null);
+        response.setPath(request.getRequestURI());
+        response.setTraceId(MDC.get("traceId"));
+        return ResponseEntity.ok(response);
+
     }
 
 }

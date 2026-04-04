@@ -12,9 +12,7 @@ import com.example.storage.service.provider.StorageProvider;
 import com.example.storage.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.logging.LoggingRebinder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
@@ -28,16 +26,15 @@ public class FileUploadService {
     private final UuidShardedKeyGenerator uuidShardedKeyGenerator;
     private final StorageProvider storageProvider;
     private final TransactionTemplate transactionTemplate;
-    private final LoggingRebinder loggingRebinder;
 
     public FileUploadResponse uploadFile(MultipartFile file, UUID uploadedBy) {
 
         String key = uuidShardedKeyGenerator.generateKey(file);
 
-        String storagePath = storageProvider.uploadFile(key,file);
+        String storagePath = storageProvider.uploadFile(key, file);
 
-        try{
-            return  transactionTemplate.execute(
+        try {
+            return transactionTemplate.execute(
                     status -> {
                         FileStorage entity = new FileStorage();
                         entity.setOriginalName(file.getOriginalFilename());
@@ -50,29 +47,26 @@ public class FileUploadService {
                         return new FileUploadResponse(
                                 entity.getId(),
                                 entity.getOriginalName(),
-                                entity.getFilePath(),
                                 entity.getMimeType(),
                                 entity.getSizeInBytes());
-                    }
-            );
-        }catch (Exception e) {
+                    });
+        } catch (Exception e) {
             try {
                 storageProvider.deleteFile(key);
             } catch (Exception ex) {
-                log.error("error for delete file {}" ,ex.getMessage(),ex);
+                log.error("error for delete file {}", ex.getMessage(), ex);
             }
-            throw new FileUploadException("Failed to persist file metadata" ,e);
+            throw new FileUploadException("Failed to persist file metadata", e);
         }
 
     }
-
 
     public InternalFileResponse downloadFile(UUID id) {
 
         FileStorage fileStorage = fileStorageRepository.findById(id)
                 .orElseThrow(() -> new FileNotFoundException("Record not found for ID: " + id, null));
-        try{
-            byte[] fileBytes =  storageProvider.downloadFile(fileStorage.getStorageKey());
+        try {
+            byte[] fileBytes = storageProvider.downloadFile(fileStorage.getStorageKey());
             InternalFileResponse response = new InternalFileResponse();
             response.setFileSize(fileBytes.length);
             response.setFileName(fileStorage.getOriginalName());
@@ -80,23 +74,32 @@ public class FileUploadService {
             response.setFile(fileBytes);
             response.setFileId(id);
             return response;
-        }catch (Exception e){
-            throw new FileDownloadException("Failed to download file" ,e);
+        } catch (Exception e) {
+            throw new FileDownloadException("Failed to download file", e);
         }
 
     }
-    @Transactional
+
     public void deleteFile(UUID id) {
 
         FileStorage fileStorage = fileStorageRepository.findById(id).orElseThrow(
-                ()-> new FileNotFoundException("Record not found for ID: "+id , null)
-        );
-        fileStorageRepository.deleteById(fileStorage.getId());
-        try{
+                () -> new FileNotFoundException("Record not found for ID: " + id, null));
+
+        transactionTemplate.execute(status -> {
+            fileStorageRepository.deleteById(fileStorage.getId());
+            return null;
+        });
+
+        try {
             storageProvider.deleteFile(fileStorage.getStorageKey());
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Storage delete failed. Restoring DB record for file: {}", fileStorage.getId());
-            throw new FileDeleteException("Failed to delete file from storage provider" ,e);
+            // Because we hold the detached entity in memory, we can save() it back to the
+            // DB
+            // to restore the pointer!
+            fileStorageRepository.save(fileStorage);
+
+            throw new FileDeleteException("Failed to delete file from storage provider", e);
         }
 
     }
